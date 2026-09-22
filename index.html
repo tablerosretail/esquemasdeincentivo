@@ -1,1132 +1,980 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-100">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Plataforma de Gobierno y Explorador de Esquemas Coppel</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Google Fonts -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
-  
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            coppel: {
-              yellow: '#FFD100',
-              blue: '#0033A0',
-              darkBlue: '#001E6C',
-              lightBlue: '#E6EEFF',
-              accent: '#1E40AF',
-              grayBG: '#F8FAFC'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gobierno de Esquemas e Incentivos - Plataforma Retail</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        corp: {
+                            blue: '#003366',
+                            blueDark: '#002244',
+                            blueLight: '#004080',
+                            accent: '#ffc107',
+                            accentHover: '#e0a800',
+                            gold: '#d97706',
+                            bg: '#f8fafc',
+                            cardBg: '#ffffff',
+                            text: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
             }
-          },
-          fontFamily: {
-            sans: ['Plus Jakarta Sans', 'sans-serif'],
-            title: ['Outfit', 'sans-serif']
-          }
         }
-      }
-    }
-  </script>
-  
-  <style>
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    h1, h2, h3, h4, .font-title {
-      font-family: 'Outfit', sans-serif;
-    }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 4px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    .tab-active {
-      border-bottom: 3px solid #0033A0;
-      color: #0033A0;
-      font-weight: 700;
-      background-color: #f8fafc;
-    }
-    /* Mobile drawer slide animation */
-    .drawer-slide {
-      transition: transform 0.3s ease-in-out;
-    }
-  </style>
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .dropdown-menu { display: none; }
+        .dropdown-menu.show { display: block; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .card-print { break-inside: avoid; border: 1px solid #ccc !important; box-shadow: none !important; margin-bottom: 20px !important; }
+        }
+
+        /* Ocultar tiendas en exportaciones PNG */
+        .png-exporting .tiendas-container { display: none !important; }
+
+        /* Estilo Contenedor de Captura PNG a 800px Ancho Fijo Estándar */
+        .png-container-800 {
+            width: 800px !important;
+            max-width: 800px !important;
+            min-width: 800px !important;
+            margin: 0 auto !important;
+            padding: 24px !important;
+            background-color: #ffffff !important;
+            box-shadow: none !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+        }
+        .png-container-800 table { font-size: 11px !important; }
+        .png-container-800 .text-xs { font-size: 11px !important; }
+        .png-container-800 .text-sm { font-size: 13px !important; }
+        .png-container-800 .text-2xl { font-size: 20px !important; }
+    </style>
 </head>
-<body class="h-full flex flex-col bg-slate-100 text-slate-800 antialiased pb-20 md:pb-6">
+<body class="bg-slate-50 min-h-screen flex flex-col">
 
-  <header class="bg-coppel-darkBlue text-white sticky top-0 z-40 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-coppel-yellow flex items-center justify-center font-bold text-coppel-darkBlue text-lg sm:text-xl shadow-inner">
-          <i class="fa-solid fa-layer-group"></i>
+    <!-- HEADER / NAVEGACIÓN SUPERIOR (Sin marcas restringidas) -->
+    <header class="bg-corp-blue text-white sticky top-0 z-50 shadow-md no-print">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-corp-accent text-corp-blue p-2 rounded-lg font-bold text-xl">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">Gobierno de Esquemas e Incentivos</h1>
+                    <p class="text-xs text-blue-200">Plataforma de Normativa & Control Retail</p>
+                </div>
+            </div>
+
+            <!-- Botones Pestañas (Navegación 2.2 y 2.3) -->
+            <nav class="flex items-center space-x-2">
+                <button onclick="switchTab('explorador')" id="nav-explorador" class="px-4 py-2 rounded-md font-medium text-sm transition bg-white/20 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-compass"></i> Explorador
+                </button>
+                <button onclick="switchTab('indice')" id="nav-indice" class="px-4 py-2 rounded-md font-medium text-sm transition bg-corp-blueLight hover:bg-white/20 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-table-list"></i> Índice de Esquemas
+                </button>
+                <button onclick="switchTab('criterios')" id="nav-criterios" class="px-4 py-2 rounded-md font-medium text-sm transition bg-corp-blueLight hover:bg-white/20 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark"></i> Criterios Generales
+                </button>
+            </nav>
         </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="font-title font-extrabold text-base sm:text-lg tracking-wide">INCENTIVOS COPPEL</span>
-            <span class="bg-coppel-yellow text-coppel-darkBlue text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider hidden sm:inline-block">Retail</span>
-          </div>
-          <p class="text-[11px] text-blue-200 truncate max-w-[200px] sm:max-w-none">Explorador Interactivo &amp; Calculadora BI</p>
-        </div>
-      </div>
+    </header>
 
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        <!-- Toggle Mobile Filters Button -->
-        <button onclick="toggleMobileFilters()" class="md:hidden bg-blue-900/80 hover:bg-blue-800 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-blue-400/30 flex items-center space-x-1.5 transition">
-          <i class="fa-solid fa-sliders text-coppel-yellow"></i>
-          <span>Filtros</span>
-        </button>
+    <!-- BARRA DE FILTROS SUPERIOR (2.1) -->
+    <section class="bg-slate-200 border-b border-slate-300 no-print">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                
+                <!-- 1. Sistema de Trabajo -->
+                <div class="relative" id="dropdown-sistema-container">
+                    <label class="block text-xs font-bold text-slate-800 uppercase mb-1">1. Sistema de Trabajo</label>
+                    <button onclick="toggleDropdown('dropdown-sistema')" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-left text-sm flex justify-between items-center text-slate-800 shadow-sm focus:outline-none">
+                        <span id="label-sistema" class="truncate font-medium">Ninguno seleccionado</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="dropdown-sistema" class="dropdown-menu absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-30 p-2 max-h-60 overflow-y-auto">
+                        <div class="flex justify-between border-b pb-1 mb-1 text-xs">
+                            <button onclick="selectAllDim('sistema', true)" class="text-corp-blue font-semibold hover:underline">Todos</button>
+                            <button onclick="selectAllDim('sistema', false)" class="text-red-600 font-semibold hover:underline">Ninguno</button>
+                        </div>
+                        <div id="opts-sistema" class="space-y-1"></div>
+                    </div>
+                </div>
 
-        <!-- Rules Button -->
-        <button onclick="toggleGlobalRulesModal()" class="bg-blue-900/80 hover:bg-blue-800 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-blue-400/30 flex items-center space-x-1.5 transition">
-          <i class="fa-solid fa-scale-balanced text-coppel-yellow"></i>
-          <span class="hidden sm:inline">Reglas Universales</span>
-        </button>
-      </div>
-    </div>
-  </header>
+                <!-- 2. Esquema -->
+                <div class="relative" id="dropdown-esquema-container">
+                    <label class="block text-xs font-bold text-slate-800 uppercase mb-1">2. Esquema</label>
+                    <button onclick="toggleDropdown('dropdown-esquema')" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-left text-sm flex justify-between items-center text-slate-800 shadow-sm focus:outline-none">
+                        <span id="label-esquema" class="truncate font-medium">Ninguno seleccionado</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="dropdown-esquema" class="dropdown-menu absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-30 p-2 max-h-60 overflow-y-auto">
+                        <div class="flex justify-between border-b pb-1 mb-1 text-xs">
+                            <button onclick="selectAllDim('esquema', true)" class="text-corp-blue font-semibold hover:underline">Todos</button>
+                            <button onclick="selectAllDim('esquema', false)" class="text-red-600 font-semibold hover:underline">Ninguno</button>
+                        </div>
+                        <div id="opts-esquema" class="space-y-1"></div>
+                    </div>
+                </div>
 
-  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow w-full flex flex-col md:flex-row gap-6">
+                <!-- 3. Puesto -->
+                <div class="relative" id="dropdown-puesto-container">
+                    <label class="block text-xs font-bold text-slate-800 uppercase mb-1">3. Puesto</label>
+                    <button onclick="toggleDropdown('dropdown-puesto')" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-left text-sm flex justify-between items-center text-slate-800 shadow-sm focus:outline-none">
+                        <span id="label-puesto" class="truncate font-medium">Ninguno seleccionado</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="dropdown-puesto" class="dropdown-menu absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-30 p-2 max-h-60 overflow-y-auto">
+                        <div class="flex justify-between border-b pb-1 mb-1 text-xs">
+                            <button onclick="selectAllDim('puesto', true)" class="text-corp-blue font-semibold hover:underline">Todos</button>
+                            <button onclick="selectAllDim('puesto', false)" class="text-red-600 font-semibold hover:underline">Ninguno</button>
+                        </div>
+                        <div id="opts-puesto" class="space-y-1"></div>
+                    </div>
+                </div>
 
-    <!-- Sidebar Filters (Collapsible on Mobile, Sticky on Desktop) -->
-    <aside id="sidebarFilter" class="hidden md:block w-full md:w-72 flex-shrink-0 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 h-fit md:sticky md:top-20 z-30">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-        <h2 class="font-title font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
-          <i class="fa-solid fa-filter text-coppel-blue"></i> Filtros de Búsqueda
-        </h2>
-        <div class="flex items-center space-x-2">
-          <button onclick="resetFilters()" class="text-xs text-coppel-blue hover:text-blue-900 font-bold underline">
-            Limpiar
-          </button>
-          <button onclick="toggleMobileFilters()" class="md:hidden text-slate-400 hover:text-slate-600 text-base px-1">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
+                <!-- 4. Tiendas -->
+                <div class="relative" id="dropdown-tienda-container">
+                    <label class="block text-xs font-bold text-slate-800 uppercase mb-1">4. Tiendas</label>
+                    <button onclick="toggleDropdown('dropdown-tienda')" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-left text-sm flex justify-between items-center text-slate-800 shadow-sm focus:outline-none">
+                        <span id="label-tienda" class="truncate font-medium">Ninguna seleccionada</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i>
+                    </button>
+                    <div id="dropdown-tienda" class="dropdown-menu absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-30 p-2 max-h-60 overflow-y-auto">
+                        <div class="flex justify-between border-b pb-1 mb-1 text-xs">
+                            <button onclick="selectAllDim('tienda', true)" class="text-corp-blue font-semibold hover:underline">Todas</button>
+                            <button onclick="selectAllDim('tienda', false)" class="text-red-600 font-semibold hover:underline">Ninguna</button>
+                        </div>
+                        <div id="opts-tienda" class="space-y-1"></div>
+                    </div>
+                </div>
 
-      <div class="space-y-3 sm:space-y-4">
-        <!-- Search Input -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Palabra Clave / Puesto / ID</label>
-          <div class="relative">
-            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Ej: TRNA-001, Cajero, Motos..." class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none transition">
-            <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-          </div>
-        </div>
+            </div>
 
-        <!-- Work System Filter -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Sistema de Trabajo</label>
-          <select id="systemFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
-            <option value="ALL">Todos los Sistemas</option>
-            <option value="Tradicional">Tradicional</option>
-            <option value="Equipos Enfocados">Equipos Enfocados (EE)</option>
-            <option value="Agencias Coppel Motos">Agencias Coppel Motos (ACM)</option>
-          </select>
-        </div>
-
-        <!-- Scheme Status Filter -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Estatus del Esquema</label>
-          <select id="statusFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
-            <option value="ALL">Todos los Estatus</option>
-            <option value="Nacional">Nacional (Permanente)</option>
-            <option value="Prueba">Prueba (Temporal)</option>
-          </select>
-        </div>
-
-        <!-- Job Position Filter -->
-        <div>
-          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Puesto o Función</label>
-          <select id="positionFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
-            <option value="ALL">Todos los Puestos</option>
-            <option value="Asesor ventas">Asesores de Ventas (#1, #17, #89, etc.)</option>
-            <option value="Cajero Multifuncional">Cajero Multifuncional (#21)</option>
-            <option value="Optometrista">Optometristas (#169, #170)</option>
-            <option value="Asesor Telcel">Asesor Telcel (#202)</option>
-            <option value="Asesor de telefonía libre">Asesor Telefonía Libre (#453)</option>
-            <option value="Asesor Tel Suplente">Asesor Telefonía Suplente (#205)</option>
-            <option value="Almacenista">Soporte y Piso (#5, #11, #19, #463)</option>
-            <option value="Gerente">Gerencias de Tienda (#36, #1031, #1032, #1039)</option>
-            <option value="Gerente General">Gerente General (#466)</option>
-            <option value="Gerente Zona">Gerente de Zona (#697)</option>
-            <option value="Gerente Regional">Gerente Regional (#2844)</option>
-          </select>
+            <!-- Opciones Globales de Exportación -->
+            <div class="flex flex-wrap items-center justify-between pt-3 mt-2 border-t border-slate-300 gap-2">
+                <span class="text-xs text-slate-700 font-bold">Exportación Masiva Vista Filtrada:</span>
+                <div class="flex items-center space-x-2">
+                    <button onclick="exportFiltered('pdf')" class="px-3 py-1.5 bg-corp-accent hover:bg-corp-accentHover text-corp-blue font-bold rounded text-xs transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-file-pdf"></i> Imprimir / Guardar PDF (Carta)
+                    </button>
+                    <button onclick="exportFilteredInfografia()" class="px-3 py-1.5 bg-corp-blue hover:bg-corp-blueDark text-white font-bold rounded text-xs transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-image"></i> Previsualizar y Exportar PNG (800px)
+                    </button>
+                    <button onclick="resetAllFilters()" class="px-3 py-1.5 bg-slate-300 hover:bg-slate-400 text-slate-800 font-semibold rounded text-xs transition flex items-center gap-1">
+                        <i class="fa-solid fa-rotate-left"></i> Limpiar Filtros
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <hr class="border-slate-100 my-2">
-
-        <!-- Display Count Controls -->
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">Ver por Pág.</label>
-            <select id="limitSelect" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
-              <option value="4">4</option>
-              <option value="8" selected>8</option>
-              <option value="12">12</option>
-              <option value="ALL">Todos</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">Orden</label>
-            <select id="sortSelect" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
-              <option value="id-asc">ID (A-Z)</option>
-              <option value="id-desc">ID (Z-A)</option>
-              <option value="status">Estatus</option>
-              <option value="system">Sistema</option>
-            </select>
-          </div>
+        <!-- BARRA RESUMEN DE FILTROS ACTIVOS -->
+        <div class="bg-slate-300 border-t border-slate-400 py-2 px-4 text-slate-900 text-xs font-mono">
+            <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-bold uppercase tracking-wider text-corp-blue flex items-center gap-1">
+                        <i class="fa-solid fa-filter"></i> Resumen de Selección:
+                    </span>
+                    <span id="summary-bar-text" class="text-slate-800 font-semibold">Sin selección activa</span>
+                </div>
+                <button onclick="toggleDetailSummary()" id="btn-detail-summary" class="text-[11px] text-corp-blue font-bold hover:underline hidden">
+                    <i class="fa-solid fa-eye"></i> Ver detalle completo
+                </button>
+            </div>
+            <!-- Panel Expandible de Detalle -->
+            <div id="summary-detail-panel" class="hidden mt-2 pt-2 border-t border-slate-400 text-[11px] text-slate-800 space-y-1">
+                <p id="detail-sistemas"><strong>Sistemas:</strong> Ninguno</p>
+                <p id="detail-esquemas"><strong>Esquemas:</strong> Ninguno</p>
+                <p id="detail-puestos"><strong>Puestos:</strong> Ninguno</p>
+                <p id="detail-tiendas"><strong>Tiendas:</strong> Ninguna</p>
+            </div>
         </div>
-      </div>
-    </aside>
+    </section>
 
-    <main class="flex-grow flex flex-col min-w-0">
+    <!-- ÁREA DE CONTENIDO DINÁMICO -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
 
-      <!-- Status Header bar -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center space-x-2">
-          <span class="text-xs sm:text-sm font-bold text-slate-700">Esquemas Encontrados:</span>
-          <span id="resultsCount" class="bg-coppel-lightBlue text-coppel-blue font-black text-xs px-2.5 py-0.5 rounded-full border border-blue-200">0</span>
+        <!-- VISTA 1: EXPLORADOR DE ESQUEMAS -->
+        <div id="tab-explorador" class="space-y-6">
+            <div id="empty-state" class="bg-white border-2 border-dashed border-slate-300 rounded-xl p-12 text-center text-slate-500 shadow-sm">
+                <div class="text-5xl text-corp-accent mb-4"><i class="fa-solid fa-hand-pointer"></i></div>
+                <h3 class="text-xl font-bold text-corp-blue mb-2">Selecciona los esquemas de tu interés</h3>
+                <p class="text-sm max-w-md mx-auto">Selecciona opciones en el menú superior para desplegar hacia abajo de forma continua los esquemas y reglas aplicables.</p>
+            </div>
+
+            <div id="cards-container" class="space-y-8"></div>
         </div>
-        <div id="activeFilterBadges" class="flex flex-wrap gap-1 text-[11px]">
-          <!-- Filter badges injected dynamically -->
+
+        <!-- VISTA 2: ÍNDICE DE ESQUEMAS (MATRIZ OFICIAL COMPLETA) -->
+        <div id="tab-indice" class="hidden space-y-6">
+            <div class="bg-white rounded-xl shadow-md p-6 border border-slate-200">
+                <div class="flex justify-between items-center border-b pb-4 mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-corp-blue">Índice de Esquemas por Puesto y Sistema de Trabajo</h2>
+                        <p class="text-sm text-slate-600">Matriz estructurada oficial con la totalidad de los puestos y esquemas normados.</p>
+                    </div>
+                    <button onclick="window.print()" class="no-print px-3 py-1.5 bg-corp-blue text-white rounded text-xs font-semibold">
+                        <i class="fa-solid fa-print"></i> Imprimir Tabla
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left border-collapse border border-slate-300">
+                        <thead>
+                            <tr class="bg-corp-blue text-white">
+                                <th class="p-2 border border-slate-300">Puestos</th>
+                                <th class="p-2 border border-slate-300 text-center">TRADICIONAL<br><span class="text-[10px] font-normal">Tradicional Nacional (9 Esquemas)</span></th>
+                                <th class="p-2 border border-slate-300 text-center">EQUIPOS ENFOCADOS<br><span class="text-[10px] font-normal">EE Nacional (4 Esquemas)</span></th>
+                                <th class="p-2 border border-slate-300 text-center">EQUIPOS ENFOCADOS<br><span class="text-[10px] font-normal">EE Prueba 1 (74 Esquemas)</span></th>
+                                <th class="p-2 border border-slate-300 text-center">EQUIPOS ENFOCADOS<br><span class="text-[10px] font-normal">EE Prueba 2 (1 Esquema)</span></th>
+                                <th class="p-2 border border-slate-300 text-center">AGENCIAS MOTOS<br><span class="text-[10px] font-normal">ACM Nacional (2 Esquemas)</span></th>
+                                <th class="p-2 border border-slate-300 text-center">AGENCIAS MOTOS<br><span class="text-[10px] font-normal">ACM Prueba 1 (2 Esquemas)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-table-body" class="divide-y divide-slate-200"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <!-- Schemes Cards Grid -->
-      <div id="schemesGrid" class="space-y-4 sm:space-y-6">
-        <!-- Cards injected dynamically via JavaScript -->
-      </div>
+        <!-- VISTA 3: CRITERIOS GENERALES -->
+        <div id="tab-criterios" class="hidden space-y-6">
+            <div class="bg-white rounded-xl shadow-md p-6 border border-slate-200">
+                <div class="flex justify-between items-center border-b pb-4 mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-corp-blue">Criterios Generales de Elegibilidad y Normativa</h2>
+                        <p class="text-sm text-slate-600">Despliegue completo y estructurado de la sección de Criterios Generales.</p>
+                    </div>
+                    <button onclick="window.print()" class="no-print px-3 py-1.5 bg-corp-blue text-white rounded text-xs font-semibold">
+                        <i class="fa-solid fa-print"></i> Imprimir Criterios
+                    </button>
+                </div>
 
-      <!-- Empty State -->
-      <div id="noResultsState" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 sm:p-12 text-center my-6">
-        <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400 text-xl">
-          <i class="fa-solid fa-folder-open"></i>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                        <h3 class="font-bold text-corp-blue border-b border-corp-accent pb-1 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced text-corp-gold"></i> 1. Reglas de Elegibilidad
+                        </h3>
+                        <ul class="text-xs text-slate-700 space-y-2 list-disc pl-4">
+                            <li><strong>Antigüedad:</strong> Laborar el mes natural completo (participan desde el 2do mes completo). Gerentes Suplentes requieren mínimo 6 meses.</li>
+                            <li><strong>Estatus Activo:</strong> Estar dado de alta en la empresa al momento del pago y asignado en el sistema PROGC.</li>
+                            <li><strong>Monto Mínimo:</strong> Se requiere generar un incentivo mínimo de $50 para recibir el pago.</li>
+                            <li><strong>Cambios de Equipo:</strong> Se pierden incentivos de Venta de Equipo, pero se conservan Venta Tienda, Clientes Nuevos, Cobranza, Seguros y Servicios.</li>
+                            <li><strong>Redondeo:</strong> No se consideran décimas en porcentajes de desempeño (ej. 88.99% = 88%).</li>
+                            <li><strong>Prevalencia:</strong> La regla descrita en la tabla prevalece sobre el texto en caso de contradicción.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                        <h3 class="font-bold text-corp-blue border-b border-corp-accent pb-1 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-gift text-corp-gold"></i> 2. Prestaciones Adicionales
+                        </h3>
+                        <div class="text-xs text-slate-700 space-y-2">
+                            <p><strong>Mi Persona:</strong> Vacaciones, Permiso con goce, IMSS, Apoyo fallecimiento, Gastos médicos menores, Club de protección, Día de cumpleaños.</p>
+                            <p><strong>Mi Estabilidad:</strong> Aguinaldo, Prima Vacacional, Infonavit, Fondo/Caja de ahorro, PTU, Descuentos, Horas Extras, Prima dominical, Incentivos.</p>
+                            <p><strong>Mi Crecimiento:</strong> Becas, Incentivo término estudios, Biblioteca, Cursos, Uniformes.</p>
+                            <p><strong>Mi Familia:</strong> Regalo Bodas, Apoyo maternidad/paternidad, Útiles escolares, Fiesta Anual, Duelo.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
+                        <h3 class="font-bold text-corp-blue border-b border-corp-accent pb-1 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-headset text-corp-gold"></i> 3. Soporte y Aclaraciones
+                        </h3>
+                        <p class="text-xs text-slate-700">Canal Service Desk: <code>servicedesk.coppel.com</code></p>
+                        <ol class="text-xs text-slate-700 space-y-1 list-decimal pl-4">
+                            <li>Seleccionar "Quiero pedir algo".</li>
+                            <li>Elegir "Gestión de servicios administrativos".</li>
+                            <li>Seleccionar "Aclaración de pago de Incentivos Retail".</li>
+                        </ol>
+                        <div class="bg-amber-100 border border-amber-300 text-amber-900 p-2 rounded text-xs mt-2">
+                            <strong>Atención:</strong> Lunes a Viernes de 9:00 am a 6:00 pm.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h3 class="font-title text-base sm:text-lg font-bold text-slate-800 mb-1">No se encontraron esquemas</h3>
-        <p class="text-xs text-slate-500 max-w-md mx-auto mb-4">No hay coincidencias con los criterios seleccionados.</p>
-        <button onclick="resetFilters()" class="bg-coppel-blue hover:bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
-          Restablecer Filtros
-        </button>
-      </div>
-
-      <!-- Pagination Footer -->
-      <div id="paginationContainer" class="mt-6 flex items-center justify-between bg-white px-4 py-3 rounded-2xl border border-slate-200 shadow-sm text-xs">
-        <button id="prevPageBtn" onclick="changePage(-1)" class="px-3 py-1.5 border border-slate-200 rounded-xl font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
-          <i class="fa-solid fa-chevron-left text-[10px]"></i> <span class="hidden sm:inline">Anterior</span>
-        </button>
-        <span id="pageIndicator" class="text-slate-600 font-bold">Página 1 de 1</span>
-        <button id="nextPageBtn" onclick="changePage(1)" class="px-3 py-1.5 border border-slate-200 rounded-xl font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
-          <span class="hidden sm:inline">Siguiente</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
-        </button>
-      </div>
 
     </main>
-  </div>
 
-  <div id="stickyCompareBar" class="fixed bottom-0 inset-x-0 bg-coppel-darkBlue text-white border-t border-blue-800 p-3 z-40 hidden shadow-2xl">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <i class="fa-solid fa-code-compare text-coppel-yellow text-base"></i>
-        <span class="text-xs font-bold">Comparando (<span id="stickyCompareCount">0</span>) esquemas</span>
-      </div>
-      <div class="flex items-center space-x-2">
-        <button onclick="clearComparison()" class="text-[11px] text-blue-200 hover:text-white underline px-2">Limpiar</button>
-        <button onclick="openCompareModal()" class="bg-coppel-yellow text-coppel-darkBlue font-black text-xs px-3 py-1.5 rounded-lg shadow-sm">
-          Ver Comparador
-        </button>
-      </div>
+    <!-- MODAL CALCULADORA INTERACTIVA DEDICADA -->
+    <div id="modal-calculadora" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 no-print overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full border border-slate-200 overflow-hidden my-8" id="modal-calc-card">
+            <div class="bg-corp-blue text-white px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-calculator text-corp-accent text-xl"></i>
+                    <h3 id="calc-title" class="text-lg font-bold">Calculadora Interactiva por Esquema</h3>
+                </div>
+                <button onclick="closeCalculator()" class="text-slate-300 hover:text-white text-xl font-bold">&times;</button>
+            </div>
+
+            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="calc-content"></div>
+
+            <div class="bg-slate-100 px-6 py-3 border-t flex justify-between items-center">
+                <span class="text-xs text-slate-500">* Solo los campos de entrada son editables. Resultados e incentivos permanecen bloqueados.</span>
+                <div class="space-x-2">
+                    <button onclick="exportCalcInfografiaPNG()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded text-xs transition flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-image"></i> Previsualizar y Exportar PNG (800px)
+                    </button>
+                    <button onclick="closeCalculator()" class="px-4 py-2 bg-slate-300 text-slate-700 font-semibold rounded text-xs hover:bg-slate-400 transition">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div id="rulesModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
-      <div class="bg-coppel-darkBlue px-5 py-3.5 text-white flex items-center justify-between flex-shrink-0">
-        <div class="flex items-center space-x-2.5">
-          <i class="fa-solid fa-scale-balanced text-coppel-yellow text-lg"></i>
-          <div>
-            <h3 class="font-title font-bold text-sm sm:text-base">Reglas Universales de Elegibilidad</h3>
-            <p class="text-[10px] sm:text-xs text-blue-200">Normativa oficial para la dispersión de incentivos</p>
-          </div>
-        </div>
-        <button onclick="toggleGlobalRulesModal()" class="text-white/80 hover:text-white text-lg px-2">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-4 text-xs text-slate-700">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <strong class="block text-slate-900 font-bold mb-0.5">Antigüedad y Alta:</strong>
-            Laborar mes natural completo. Nuevos ingresos cobran desde el 2do mes. Gerentes Suplentes requieren mínimo 6 meses en el puesto.
-          </div>
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <strong class="block text-slate-900 font-bold mb-0.5">Estatus PROGC:</strong>
-            Estar activo en nómina y asignado al equipo correspondiente en sistema PROGC durante el mes evaluado.
-          </div>
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <strong class="block text-slate-900 font-bold mb-0.5">Candado de $50 Mínimo:</strong>
-            Se requiere alcanzar un incentivo mensual mínimo acumulado de $50.00 MXN para procesar la dispersión.
-          </div>
-          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <strong class="block text-slate-900 font-bold mb-0.5">Redondeo Truncado:</strong>
-            Sin décimas en porcentajes de cumplimiento. Se aplica truncamiento directo (ej. 88.99% = 88%).
-          </div>
-        </div>
-
-        <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-200 text-blue-900">
-          <strong class="block font-bold text-xs mb-1">Atención de Aclaraciones Vía Service Desk:</strong>
-          <p class="text-[11px] leading-relaxed">Portal oficial: <strong>servicedesk.coppel.com</strong> -> "Gestión de Servicios Administrativos" -> "Aclaración de Incentivos Retail".</p>
-        </div>
-      </div>
-
-      <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 flex justify-end flex-shrink-0">
-        <button onclick="toggleGlobalRulesModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
-          Cerrar
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div id="compareModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
-      <div class="bg-coppel-darkBlue px-4 sm:px-6 py-3.5 text-white flex items-center justify-between flex-shrink-0">
-        <div class="flex items-center space-x-2.5">
-          <i class="fa-solid fa-code-compare text-coppel-yellow text-lg"></i>
-          <div>
-            <h3 class="font-title font-bold text-sm sm:text-base">Matriz Comparativa de Esquemas</h3>
-            <p class="text-[11px] text-blue-200">Comparación de reglas, comisiones e indicadores</p>
-          </div>
-        </div>
-        <button onclick="closeCompareModal()" class="text-white/80 hover:text-white text-lg px-2">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div id="compareModalBody" class="p-3 sm:p-6 overflow-x-auto overflow-y-auto custom-scrollbar flex-grow bg-slate-50">
-        <!-- Dynamic Side-by-Side Table injected via JS -->
-      </div>
-
-      <div class="bg-white px-4 sm:px-6 py-3 border-t border-slate-200 flex items-center justify-between flex-shrink-0">
-        <button onclick="clearComparison()" class="text-xs text-red-600 hover:text-red-800 font-bold flex items-center gap-1">
-          <i class="fa-solid fa-trash"></i> Vaciar
-        </button>
-        <button onclick="closeCompareModal()" class="bg-coppel-blue hover:bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
-          Cerrar
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div id="calcModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
-      <div class="bg-coppel-blue px-5 py-3.5 text-white flex items-center justify-between flex-shrink-0">
-        <div class="flex items-center space-x-2.5">
-          <i class="fa-solid fa-calculator text-coppel-yellow text-lg"></i>
-          <div>
-            <h3 id="calcModalTitle" class="font-title font-bold text-sm sm:text-base">Simulador de Incentivo</h3>
-            <p class="text-[10px] sm:text-xs text-blue-200">Proyección estimativa por cumplimiento</p>
-          </div>
-        </div>
-        <button onclick="closeCalcModal()" class="text-white/80 hover:text-white text-lg px-2">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div id="calcModalBody" class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-4 text-xs">
-        <!-- Dynamic Interactive Inputs injected via JS -->
-      </div>
-
-      <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 flex items-center justify-between flex-shrink-0">
-        <div>
-          <span class="text-[10px] text-slate-500 font-bold uppercase block">Estimado a Cobrar</span>
-          <span id="calcTotalOutput" class="text-lg font-black text-emerald-600">$0.00 MXN</span>
-        </div>
-        <button onclick="closeCalcModal()" class="bg-coppel-darkBlue hover:bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
-          Aceptar
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Full Scheme Knowledge Base Dataset
-    const schemesData = [
-      {
-        id: "TRNA-001",
-        name: "Tradicional Nacional-001",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Asesor ventas #89", "Asesor Motos #269", "Asesor tienda #204", "Asesor Muebles #1", "Asesor Ropa #17", "Asesor Zapatería #131", "Asesor Línea Blanca #164", "Asesor Joyería #278", "Asesor Electrónica #439"],
-        glossary: [
-          { concept: "Venta de centro", def: "Venta del centro asignado (Ropa, Muebles, Zapatería, Electrónica, etc.)." },
-          { concept: "Venta tienda", def: "Venta global acumulada en toda la sucursal." },
-          { concept: "Clientes nuevos", def: "Aperturas de crédito Coppel otorgadas en tienda." },
-          { concept: "Cobranza", def: "Recuperación de cartera y abonos en cajas." },
-          { concept: "Seguros / Servicios", def: "Club de Protección, Motos, Celulares, Garantías y Armados." }
-        ],
-        indicators: [
-          { name: "Venta de Centro vs Prom/Colab", type: "Matriz 2D", detail: "Hasta $2,000 con ≥130% cumplimiento y ≥700K venta prom/colab." },
-          { name: "Venta de Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" },
-          { name: "Clientes Nuevos Coppel", type: "Escala Fija", detail: "100%: $150 | 110%: $250 | ≥125%: $400" },
-          { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 | 100%: $300 | ≥110%: $500" },
-          { name: "Seguros (Club, Motos, Celular)", type: "Comisión %", detail: "Club/Motos: 3% a 5% | Celulares: 1.5% a 2.5%" },
-          { name: "Servicios (Garantía, Armado)", type: "Comisión %", detail: "Garantías y Armado: 4% sobre venta individual" }
-        ],
-        rules: [
-          "Traspasos entre equipos pierden Venta Centro pero conservan Venta Tienda, Cobranza y Seguros.",
-          "Truncamiento directo sin decimales en porcentajes de cumplimiento (ej. 88.99% pasa a 88%)."
-        ],
-        example: "Venta promedio por colaborador de $740,000 MXN y cumplimiento de meta de centro al 102.00% resulta en $1,175. Venta tienda al 118% otorga $500. Clientes nuevos al 112% otorga $250. Cobranza al 96% otorga $200. Total base = $2,125 MXN.",
-        payoutFrequency: "Mensual (Al cierre del mes siguiente al evaluado)."
-      },
-      {
-        id: "TRNA-002",
-        name: "Tradicional Nacional-002",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Cajero Multifuncional #21"],
-        glossary: [
-          { concept: "Venta tienda", def: "Venta total en la sucursal." },
-          { concept: "Cobranza", def: "Abonos recuperados en cajas de la tienda." },
-          { concept: "Clientes Nuevos", def: "Nuevos créditos Coppel autorizados." }
-        ],
-        indicators: [
-          { name: "Venta de Tienda", type: "Escala Fija", detail: "100%: $300 | 105%: $400 | ≥110%: $500" },
-          { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 | 100%: $300 | ≥110%: $500" },
-          { name: "Clientes Nuevos Coppel", type: "Escala Fija", detail: "100%: $150 | 115%: $300 | ≥125%: $400" },
-          { name: "Seguros y Servicios", type: "Comisión %", detail: "Club/Motos: 3%-5% | Celulares: 1.5%-2.5% | Garantías/Armado: 4%" }
-        ],
-        rules: [
-          "Sin evaluación de Venta Centro individual.",
-          "Incentivo $0 si Venta Tienda es <100%."
-        ],
-        example: "Tienda Venta 118% ($500), Cobranza 107% ($400), Clientes Nuevos 112% ($250). Total = $1,150 + comisiones individuales.",
-        payoutFrequency: "Mensual (Cierre del mes siguiente)."
-      },
-      {
-        id: "TRNA-003",
-        name: "Tradicional Nacional-003",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Optometrista Certificado #169"],
-        glossary: [
-          { concept: "Venta Óptica", def: "Armazones, micas y lentes de contacto vendidos en la tienda." }
-        ],
-        indicators: [
-          { name: "Venta Centro Óptica", type: "Matriz Volumen", detail: "Desde $200 (<60K/80%) hasta $3,000 (≥180K/≥150%)." },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" },
-          { name: "Cobranza y Clientes Nuevos", type: "Escala Fija", detail: "Hasta $500 en Cobranza y $400 en Clientes Nuevos" }
-        ],
-        rules: [
-          "Requiere número de vendedor individual en sistema para cobro de comisiones."
-        ],
-        example: "Cumplimiento Óptica 96% en tienda con venta óptica de $100K-$120K otorga $800. Venta tienda 105% otorga $300. Total = $1,100 MXN.",
-        payoutFrequency: "Mensual (Cierre del mes siguiente)."
-      },
-      {
-        id: "TRNA-004",
-        name: "Tradicional Nacional-004",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Optometrista No Certificado #170"],
-        glossary: [
-          { concept: "No Certificado", def: "Colaborador optometrista en proceso de acreditación." }
-        ],
-        indicators: [
-          { name: "Venta Centro Óptica", type: "Matriz Volumen (50%)", detail: "Desde $100 (<60K/80%) hasta $1,500 (≥180K/≥150%)." },
-          { name: "Venta Tienda, Cobranza, CN", type: "Escala Fija", detail: "Mismos valores que TRNA-003 para tienda" }
-        ],
-        rules: [
-          "Escala ajustada al 50% de valor con respecto al certificado."
-        ],
-        example: "Óptica 96% en $100K-$120K otorga $400 (vs $800 de certificado). Total = $700 MXN + tienda.",
-        payoutFrequency: "Mensual (Cierre del mes siguiente)."
-      },
-      {
-        id: "TRNA-005",
-        name: "Tradicional Nacional-005",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Asesor Telcel #202"],
-        glossary: [
-          { concept: "Telcel / Carriers", def: "Venta de Telefonía Telcel, AT&T y Movistar." }
-        ],
-        indicators: [
-          { name: "Venta Telcel Tienda", type: "Matriz Rango Tienda", detail: "Rangos: <400K, 400K-1M, 1M-1.6M, ≥1.6M. Pago hasta $3,050." },
-          { name: "Venta Tienda y Cobranza", type: "Escala Fija", detail: "Hasta $500 en Venta y $500 en Cobranza" }
-        ],
-        rules: [
-          "Incentivo variable dependiendo del volumen de venta telefonía en la tienda."
-        ],
-        example: "Telcel 96.96% en tienda de $1M-$1.6M genera $900. Tienda 105% genera $300. Total = $1,200 MXN.",
-        payoutFrequency: "Mensual (Cierre del mes siguiente)."
-      },
-      {
-        id: "TRNA-006",
-        name: "Tradicional Nacional-006",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Asesor de telefonía libre #453"],
-        glossary: [
-          { concept: "Telefonía Libre", def: "Equipos libres de fábrica de cualquier marca." }
-        ],
-        indicators: [
-          { name: "Venta Telefonía Libre", type: "Matriz Rango Tienda", detail: "Rangos: <200K, 200K-600K, 600K-1M, ≥1M. Pago hasta $3,950." },
-          { name: "Seguro Celular", type: "Comisión %", detail: "1.5% (<100%) o 2.5% (≥100%)" }
-        ],
-        rules: [
-          "Excluye comisiones por servicios de armado de muebles."
-        ],
-        example: "Libre 96.96% en tienda $600K-$1M genera $1,050. Total con tienda = $1,350 MXN.",
-        payoutFrequency: "Mensual (Cierre del mes siguiente)."
-      },
-      {
-        id: "TRNA-007",
-        name: "Tradicional Nacional-007",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Asesor Tel Suplente #205"],
-        glossary: [
-          { concept: "Telefonía Total", def: "Suma de Telefonía Telcel y Telefonía Libre." }
-        ],
-        indicators: [
-          { name: "Venta Telefonía Total", type: "Escala Lineal", detail: "89%: $400 | 100%: $700 | 110%: $1,000 | ≥130%: $1,550" },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" }
-        ],
-        rules: [
-          "Sin evaluación de rango de volumen de tienda.",
-          "Pago en 2da quincena."
-        ],
-        example: "Telefonía Total 97% genera $550. Tienda 105% genera $300. Total = $850 MXN.",
-        payoutFrequency: "2da Quincena del mes siguiente."
-      },
-      {
-        id: "TRNA-008",
-        name: "Tradicional Nacional-008",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Almacenista #5", "Auxiliar de piso #11", "Paqueteria #19", "Serv y Gar #463"],
-        glossary: [
-          { concept: "Personal de Soporte", def: "Incentivo operativo colectivo por metas globales." }
-        ],
-        indicators: [
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $200 | 105%: $300 | ≥110%: $400" },
-          { name: "Clientes Nuevos", type: "Escala Fija", detail: "100%: $100 | 110%: $200 | ≥125%: $350" },
-          { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 | 100%: $300 | ≥110%: $500" }
-        ],
-        rules: [
-          "Aplica para todo el personal operativo de piso y almacén."
-        ],
-        example: "Tienda 118% ($400), Clientes Nuevos 112% ($200), Cobranza 93% ($150). Total = $750 MXN.",
-        payoutFrequency: "2da Quincena del mes siguiente."
-      },
-      {
-        id: "TRNA-009",
-        name: "Tradicional Nacional-009",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Gerente Suplente #36", "Gerente Tienda Muebles #1031", "Gerente Tienda Ropa #1032"],
-        glossary: [
-          { concept: "Multiplicador Faltante", def: "Factor (1.10x, 1.00x, 0.90x) por inventario de merma." }
-        ],
-        indicators: [
-          { name: "Venta Centro vs Colaborador", type: "Matriz 2D", detail: "Hasta $4,850 (≥125% cumplimiento y ≥700K vta/colab)." },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $450 | 105%: $750 | ≥110%: $1,050" },
-          { name: "Multiplicador de Faltante", type: "Factor", detail: "<1.00%: 1.10x | 1.00%-1.49%: 1.00x | ≥1.50%: 0.90x" }
-        ],
-        rules: [
-          "Fórmula: (Centro + Tienda + Clientes + Cobranza) * Multiplicador Faltante."
-        ],
-        example: "Incentivo acumulado $4,250 MXN con Faltante 0.95% (<1.00%). Ajustado x 1.10 = $4,675 MXN.",
-        payoutFrequency: "2da Quincena del mes siguiente."
-      },
-      {
-        id: "TRNA-G01",
-        name: "Tradicional Nacional-G01",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Gerente General de tienda #466"],
-        glossary: [
-          { concept: "Incentivo Trimestral", def: "Evaluación y dispersión cada 3 meses naturales." }
-        ],
-        indicators: [
-          { name: "Venta Tienda Trimestral", type: "Escala Fija", detail: "93%: $6,500 | 100%: $12,000 | 105%: $15,500 | ≥110%: $18,000" },
-          { name: "Cobranza Trimestral", type: "Escala Fija", detail: "97%: $2,400 | 100%: $4,800 | 105%: $6,200 | ≥110%: $7,500" },
-          { name: "Clientes Nuevos Trimestral", type: "Escala Fija", detail: "100%: $3,800 | 105%: $5,200 | 110%: $6,500 | ≥120%: $7,500" }
-        ],
-        rules: [
-          "Liquidación a 45 días pos-cierre trimestral."
-        ],
-        example: "Venta 99.6% ($6,500), Cobranza 98.4% ($2,400), Clientes Nuevos 110% ($6,500). Total Trimestral = $15,400 MXN.",
-        payoutFrequency: "Trimestral (45 días pos-cierre)."
-      },
-      {
-        id: "TRNA-G02",
-        name: "Tradicional Nacional-G02",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Gerente Zona tienda #697"],
-        glossary: [
-          { concept: "Gerencia de Zona", def: "Supervisión territorial de sucursales Coppel." }
-        ],
-        indicators: [
-          { name: "Venta Zona Trimestral", type: "Escala Fija", detail: "95%: $8,500 | 100%: $14,500 | ≥110%: $20,500" },
-          { name: "Cobranza Zona Trimestral", type: "Escala Fija", detail: "98%: $4,200 | 100%: $8,500 | ≥110%: $12,000" },
-          { name: "Multiplicador 15%", type: "Candado 25%", detail: "+15% extra si ≥25% de tiendas aprueban candados de Venta, Cobranza y CN." }
-        ],
-        rules: [
-          "Requiere cumplimiento del candado del 25% de sucursales aprobadas."
-        ],
-        example: "Metas ganadas $34,000 + Candado 25% tiendas (+15% = $5,100). Total = $39,100 MXN.",
-        payoutFrequency: "Trimestral (45 días pos-cierre)."
-      },
-      {
-        id: "EENA-001",
-        name: "Equipos Enfocados Nacional-001",
-        system: "Equipos Enfocados",
-        status: "Nacional",
-        positions: ["Asesor ventas #89", "Asesor Motos #269", "Asesor tienda #204", "Asesor Muebles #1", "Asesor Ropa #17"],
-        glossary: [
-          { concept: "Venta de Equipo", def: "Venta grupal atribuida al equipo comercial asignado." }
-        ],
-        indicators: [
-          { name: "Venta de Equipo", type: "Escala Directa", detail: "89%: $600 | 100%: $1,000 | 110%: $1,300 | ≥130%: $1,900" },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" }
-        ],
-        rules: [
-          "Sustituye la matriz individual por cumplimiento de equipo directo."
-        ],
-        example: "Equipo 102% ($1,000), Tienda 118% ($500), Clientes 111% ($200), Cobranza 96% ($200). Total Base = $1,900 MXN.",
-        payoutFrequency: "2da Quincena del mes siguiente."
-      },
-      {
-        id: "EEPR-001",
-        name: "Equipos Enfocados Prueba-001",
-        system: "Equipos Enfocados",
-        status: "Prueba",
-        positions: ["Asesor ventas #89", "Asesor Motos #269", "Asesor Muebles #1", "Asesor Ropa #17"],
-        glossary: [
-          { concept: "Multiplicadores Digital/Crédito", def: "+20% por Venta Crédito ≥90% y +20% por 1ra compra Digital ≥90%." }
-        ],
-        indicators: [
-          { name: "Pilar 1: Venta de Equipo", type: "Escala Fija", detail: "80%: $400 | 100%: $1,300 | ≥120%: $1,900" },
-          { name: "Pilar 2: Multiplicadores", type: "Factor (+40%)", detail: "+20% Crédito ≥90% + 20% Digital ≥90%" },
-          { name: "Pilar 3: Venta Tienda Extra", type: "Multiplicador 20%", detail: "20% adicional sobre TODO lo ganado si Tienda ≥100%" }
-        ],
-        rules: [
-          "Vigencia de Prueba: Junio 2026 - Septiembre 2026."
-        ],
-        example: "Base $1,300 + Multiplicadores 40% ($520) + Comisiones ($2,980.75) = $4,800.75. Tienda ≥100% (+20%) = $5,760.90 MXN.",
-        payoutFrequency: "2da Quincena del mes siguiente."
-      },
-      {
-        id: "AMNA-001",
-        name: "Agencias Motos Nacional-001",
-        system: "Agencias Coppel Motos",
-        status: "Nacional",
-        positions: ["Asesor Motos #269"],
-        glossary: [
-          { concept: "Comisión Venta", def: "0.55% directo sobre todas las ventas a crédito y contado." }
-        ],
-        indicators: [
-          { name: "Comisión Venta Asesor", type: "Porcentaje Fijo", detail: "0.55% (0.0055) directo sobre monto vendido." },
-          { name: "Multiplicador ISA", type: "Factor", detail: "90%-99%: 1.05x | ≥100%: 1.10x" },
-          { name: "Multiplicador Seguros", type: "Factor", detail: "46%-55%: 1.05x | 56%-100%: 1.10x" },
-          { name: "Multiplicador Venta Agencia", type: "Factor", detail: "70%-99%: 1.00x | 100%-119%: 1.05x | ≥120%: 1.10x" }
-        ],
-        rules: [
-          "Fórmula: Venta * 0.0055 * ISA * Seguros * Agencia."
-        ],
-        example: "Venta $471,353 * 0.0055 = $2,592. Con ISA 100% (1.10), Seguros 75% (1.10) y Agencia 109% (1.05) -> Total = $3,293.13 MXN.",
-        payoutFrequency: "Mensual (Cierre del mes siguiente)."
-      },
-      {
-        id: "AMPR-009",
-        name: "Agencias Motos Prueba-009",
-        system: "Agencias Coppel Motos",
-        status: "Prueba",
-        positions: ["Gerente Tienda Motos #1039"],
-        glossary: [
-          { concept: "Agencia Motos", def: "Sucursal especializada en motocicletas y accesorios." }
-        ],
-        indicators: [
-          { name: "Venta Agencia & Conversión", type: "Matriz 2D", detail: "Hasta $5,000 con ≥110% venta y ≥60% conversión seguros." },
-          { name: "Clientes Nuevos Agencia", type: "Escala Fija", detail: "80%: $200 | 100%: $550 | ≥120%: $2,000" },
-          { name: "Cobranza Agencia", type: "Escala Fija", detail: "97%: $1,000 | 100%: $1,500 | ≥110%: $2,500" }
-        ],
-        rules: [
-          "Prueba vigente Abril 2026 - Agosto 2026."
-        ],
-        example: "Venta 108% con conversión 86% ($4,000) + Clientes 105% ($1,000) + Cobranza 105% ($2,000) + NPS ($500) = $8,100 MXN.",
-        payoutFrequency: "Mensual (Cierre del mes siguiente)."
-      }
-    ];
-
-    // State Management
-    let filteredSchemes = [...schemesData];
-    let selectedForCompare = [];
-    let currentPage = 1;
-
-    // Initialization
-    document.addEventListener('DOMContentLoaded', () => {
-      applyFilters();
-    });
-
-    function toggleMobileFilters() {
-      const sidebar = document.getElementById('sidebarFilter');
-      sidebar.classList.toggle('hidden');
-      if (!sidebar.classList.contains('hidden')) {
-        sidebar.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function applyFilters() {
-      const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
-      const systemVal = document.getElementById('systemFilter').value;
-      const statusVal = document.getElementById('statusFilter').value;
-      const positionVal = document.getElementById('positionFilter').value;
-      const sortVal = document.getElementById('sortSelect').value;
-
-      filteredSchemes = schemesData.filter(s => {
-        const matchesSearch = !searchVal || 
-          s.id.toLowerCase().includes(searchVal) ||
-          s.name.toLowerCase().includes(searchVal) ||
-          s.positions.some(p => p.toLowerCase().includes(searchVal)) ||
-          s.indicators.some(i => i.name.toLowerCase().includes(searchVal));
-
-        const matchesSystem = (systemVal === 'ALL') || s.system === systemVal;
-        const matchesStatus = (statusVal === 'ALL') || s.status === statusVal;
-        const matchesPosition = (positionVal === 'ALL') || s.positions.some(p => p.toLowerCase().includes(positionVal.toLowerCase()));
-
-        return matchesSearch && matchesSystem && matchesStatus && matchesPosition;
-      });
-
-      // Sorting
-      if (sortVal === 'id-asc') {
-        filteredSchemes.sort((a, b) => a.id.localeCompare(b.id));
-      } else if (sortVal === 'id-desc') {
-        filteredSchemes.sort((a, b) => b.id.localeCompare(a.id));
-      } else if (sortVal === 'status') {
-        filteredSchemes.sort((a, b) => a.status.localeCompare(b.status));
-      } else if (sortVal === 'system') {
-        filteredSchemes.sort((a, b) => a.system.localeCompare(b.system));
-      }
-
-      currentPage = 1;
-      renderActiveBadges();
-      renderSchemes();
-    }
-
-    function resetFilters() {
-      document.getElementById('searchInput').value = '';
-      document.getElementById('systemFilter').value = 'ALL';
-      document.getElementById('statusFilter').value = 'ALL';
-      document.getElementById('positionFilter').value = 'ALL';
-      document.getElementById('sortSelect').value = 'id-asc';
-      document.getElementById('limitSelect').value = '8';
-      applyFilters();
-    }
-
-    function renderActiveBadges() {
-      const container = document.getElementById('activeFilterBadges');
-      container.innerHTML = '';
-
-      const system = document.getElementById('systemFilter').value;
-      const status = document.getElementById('statusFilter').value;
-      const position = document.getElementById('positionFilter').value;
-
-      if (system !== 'ALL') {
-        container.innerHTML += `<span class="bg-blue-100 text-coppel-blue px-2 py-0.5 rounded font-semibold">${system}</span>`;
-      }
-      if (status !== 'ALL') {
-        container.innerHTML += `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-semibold">${status}</span>`;
-      }
-      if (position !== 'ALL') {
-        container.innerHTML += `<span class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-semibold">${position}</span>`;
-      }
-    }
-
-    function renderSchemes() {
-      const grid = document.getElementById('schemesGrid');
-      const countLabel = document.getElementById('resultsCount');
-      const noResults = document.getElementById('noResultsState');
-      const limitVal = document.getElementById('limitSelect').value;
-
-      countLabel.textContent = filteredSchemes.length;
-
-      if (filteredSchemes.length === 0) {
-        grid.innerHTML = '';
-        noResults.classList.remove('hidden');
-        document.getElementById('paginationContainer').classList.add('hidden');
-        return;
-      }
-
-      noResults.classList.add('hidden');
-      document.getElementById('paginationContainer').classList.remove('hidden');
-
-      let limit = limitVal === 'ALL' ? filteredSchemes.length : parseInt(limitVal);
-      const totalPages = Math.ceil(filteredSchemes.length / limit) || 1;
-      
-      if (currentPage > totalPages) currentPage = totalPages;
-
-      const startIndex = (currentPage - 1) * limit;
-      const paginatedSchemes = filteredSchemes.slice(startIndex, startIndex + limit);
-
-      document.getElementById('pageIndicator').textContent = `Página ${currentPage} de ${totalPages}`;
-      document.getElementById('prevPageBtn').disabled = (currentPage === 1);
-      document.getElementById('nextPageBtn').disabled = (currentPage === totalPages);
-
-      grid.innerHTML = paginatedSchemes.map(s => {
-        const isCompared = selectedForCompare.includes(s.id);
-        const statusBadgeClass = s.status === 'Nacional' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300';
-        
-        return `
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col transition hover:shadow-md">
+    <!-- MODAL PREVISUALIZADOR PNG (800PX DE ANCHO ADAPTADO) -->
+    <div id="modal-preview-png" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[60] hidden flex flex-col items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full flex flex-col max-h-[90vh] overflow-hidden border border-slate-300">
+            <div class="bg-corp-blue text-white px-6 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-file-image text-corp-accent text-lg"></i>
+                    <h3 class="text-sm font-bold">Vista Previa de Imagen PNG (Ancho Fijo 800px)</h3>
+                </div>
+                <button onclick="closePreviewPNG()" class="text-slate-300 hover:text-white text-xl font-bold">&times;</button>
+            </div>
             
-            <!-- Scheme Mobile-Optimized Header -->
-            <div class="bg-coppel-darkBlue text-white p-4 sm:p-5 border-b border-slate-800">
-              <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
-                <div class="flex items-center space-x-2">
-                  <span class="font-title font-extrabold text-xl sm:text-2xl text-coppel-yellow">${s.id}</span>
-                  <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full border font-bold ${statusBadgeClass}">${s.status}</span>
+            <div class="p-4 bg-slate-200 overflow-y-auto flex-grow flex justify-center items-start">
+                <img id="img-preview-target" class="shadow-lg border border-slate-400 rounded bg-white" alt="Previsualización PNG">
+            </div>
+
+            <div class="bg-slate-100 px-6 py-3 border-t flex justify-between items-center">
+                <span class="text-xs text-slate-600">Imagen renderizada a 800px de ancho continuo para lectura clara en scroll.</span>
+                <div class="space-x-2">
+                    <a id="btn-download-png" download="Exportacion_Infografia.png" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded text-xs transition inline-flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-download"></i> Descargar Imagen PNG
+                    </a>
+                    <button onclick="closePreviewPNG()" class="px-4 py-2 bg-slate-300 text-slate-700 font-semibold rounded text-xs hover:bg-slate-400 transition">
+                        Cerrar
+                    </button>
                 </div>
-                
-                <div class="flex items-center space-x-2">
-                  <button onclick="openCalcModal('${s.id}')" class="bg-blue-900/90 hover:bg-blue-800 text-coppel-yellow text-xs font-bold px-2.5 py-1.5 rounded-xl border border-blue-400/30 flex items-center gap-1 transition">
-                    <i class="fa-solid fa-calculator text-xs"></i>
-                    <span>Simular</span>
-                  </button>
-                  <button onclick="toggleCompare('${s.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1 ${isCompared ? 'bg-coppel-yellow text-coppel-darkBlue' : 'bg-slate-800 text-slate-300 hover:text-white'}">
-                    <i class="fa-solid ${isCompared ? 'fa-check' : 'fa-plus'} text-[10px]"></i>
-                    <span class="hidden sm:inline">${isCompared ? 'Comparando' : 'Comparar'}</span>
-                  </button>
-                </div>
-              </div>
-
-              <h3 class="font-title font-bold text-sm sm:text-base text-slate-100">${s.name}</h3>
-              <p class="text-[11px] text-blue-200 mt-0.5">Sistema: <strong class="text-white">${s.system}</strong></p>
             </div>
+        </div>
+    </div>
 
-            <!-- Position Tags Scrollable Bar -->
-            <div class="bg-slate-50 px-3 sm:px-5 py-2 border-b border-slate-100 flex items-center space-x-2 overflow-x-auto custom-scrollbar text-[11px]">
-              <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px] flex-shrink-0">Puestos:</span>
-              <div class="flex items-center space-x-1.5 flex-nowrap">
-                ${s.positions.map(p => `<span class="bg-white border border-slate-200 text-slate-700 font-medium px-2 py-0.5 rounded-lg text-[10px] whitespace-nowrap">${p}</span>`).join('')}
-              </div>
-            </div>
+    <!-- SCRIPT DE DATOS Y CASCADA DE FILTRADO -->
+    <script>
+        const TIENDAS_GENERALES = [52, 205, 224, 228, 247, 490, 491, 503, 504, 508, 510, 511, 512, 513, 514, 515, 517, 518, 519, 520, 521, 523, 524, 525, 526, 527, 528, 529, 531, 532, 533, 535, 536, 537, 538, 539, 541, 542, 543, 544, 551, 552, 553, 555, 560, 561, 563, 565, 566, 567, 568, 571, 572, 573, 574, 576, 577, 578, 579, 582, 584, 585, 586, 587, 588, 589, 590, 591, 592, 596, 597, 598, 600, 601, 605, 606, 607, 609, 610, 611, 612, 613, 614, 616, 618, 619, 620, 621, 623, 624, 625, 626, 627, 628, 629, 630, 631, 633, 634, 638, 639, 640, 643, 645, 646, 647, 650, 651, 652, 654, 656, 657, 658, 659, 660, 661, 664, 665, 666, 667, 668, 669, 672, 673, 675, 676, 677, 679, 680, 681, 683, 685, 686, 687, 690, 691, 692, 693, 695, 696, 698, 699, 700, 701, 703, 704, 705, 706, 708, 711, 712, 713, 714, 715, 716, 717, 718, 719, 721, 722, 723, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 737, 738, 739, 740, 741, 743, 748, 749, 750, 751, 752, 754, 756, 757, 758, 759, 760, 761, 764, 765, 766, 769, 770, 771, 772, 776, 779, 781, 782, 783, 786, 787, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 804, 806, 807, 808, 811, 812, 813, 814, 815, 816, 818, 819, 820, 822, 825, 826, 827, 828, 829, 831, 832, 833, 834, 836, 839, 840, 841, 844, 847, 849, 850, 851, 855, 856, 862, 863, 866, 877, 880, 882, 885, 886, 895, 910, 914, 918, 924, 928, 934, 950, 951, 953, 955, 958, 962, 963, 964, 970, 971, 976, 978, 980, 986, 989, 990, 995, 1012, 1020, 1021, 1025, 1030, 1031, 1032, 1033, 1034, 1035, 1038, 1039, 1041, 1044, 1047, 1051, 1058, 1059, 1060, 1061, 1064, 1066, 1067, 1069, 1071, 1072, 1074, 1077, 1082, 1085, 1089, 1090, 1093, 1104, 1109, 1112, 1116, 1121, 1124, 1127, 1129, 1130, 1131, 1133, 1137, 1140, 1143, 1144, 1152, 1156, 1162, 1163, 1164, 1165, 1166, 1169, 1170, 1171, 1187, 1188, 1191, 1192, 1193, 1199, 1204, 1205, 1219, 1221, 1226, 1227, 1229, 1236, 1238, 1239, 1242, 1243, 1246, 1247, 1248, 1250, 1257, 1258, 1260, 1262, 1263, 1265, 1271, 1272, 1276, 1277, 1279, 1288, 1291, 1294, 1301, 1304, 1305, 1306, 1307, 1308, 1310, 1312, 1313, 1315, 1316, 1318, 1321, 1322, 1326, 1328, 1329, 1330, 1331, 1334, 1335, 1336, 1337, 1344, 1345, 1349, 1350, 1353, 1354, 1357, 1358, 1365, 1370, 1372, 1375, 1380, 1382, 1384, 1386, 1392, 1394, 1397, 1398, 1399, 1435, 1445, 1447, 1468, 1469, 1473, 1476, 1478, 1479, 1481, 1484, 1485, 1486, 1488, 1492, 1493, 1495, 1496, 1497, 1499, 6501, 6502, 6503, 6505, 6508, 6513, 6517, 6525, 6527, 6528, 6529, 6530, 6532, 6533, 6535, 6540, 6545, 6548, 6549, 6550, 6552, 6555, 6559, 6560, 6564, 6566, 6567, 6569, 6571, 6572, 6573, 6576, 6581, 6584, 6588, 6591, 6593, 6595, 6598, 6599, 6612, 6649, 6659, 6674, 6713, 6714, 6728, 6736, 6741, 6757, 6762, 6788, 6820, 6830, 6870, 6872, 6877, 6908, 7575, 7603, 7604, 7605, 7611, 7612, 7613, 7614, 7616, 7617, 7619, 7624, 7627, 7628, 7632, 7633, 7638, 7641, 7643, 7644, 7645, 7647, 7652, 7653, 7655, 7656, 7659, 7660, 7667, 7668, 7670, 7673, 7674, 7675, 7767, 7768, 7681, 7688, 7691, 7692, 7693, 7695, 7697, 7700, 7706, 7707, 7708, 7709, 7711, 7712, 7713, 7717, 7724, 7732, 7739, 7740, 7747, 7756, 7760, 7764, 7766, 7769, 7771, 7783, 7789, 7804, 7806, 7811, 7812, 7824, 7828, 7833, 7840, 7847, 7848, 7852, 7853, 7865, 7870, 7871, 7878, 7884, 7888, 7889, 7898, 7916, 7919, 7931, 7945, 7947, 7953, 7960, 7992, 7998, 8636];
 
-            <!-- Tabbed Navigation Inside Card (Horizontally Scrollable) -->
-            <div class="border-b border-slate-200 bg-white px-3 sm:px-5 flex space-x-2 sm:space-x-4 overflow-x-auto no-scrollbar text-xs font-semibold flex-shrink-0">
-              <button onclick="switchTab('${s.id}', 'indicadores')" id="tab-btn-${s.id}-indicadores" class="py-2.5 px-2 tab-active whitespace-nowrap rounded-t-lg transition flex items-center gap-1">
-                <i class="fa-solid fa-chart-pie text-coppel-blue"></i> <span>Indicadores</span>
-              </button>
-              <button onclick="switchTab('${s.id}', 'reglas')" id="tab-btn-${s.id}-reglas" class="py-2.5 px-2 text-slate-500 hover:text-slate-800 whitespace-nowrap rounded-t-lg transition flex items-center gap-1">
-                <i class="fa-solid fa-shield-cat"></i> <span>Reglas</span>
-              </button>
-              <button onclick="switchTab('${s.id}', 'ejemplo')" id="tab-btn-${s.id}-ejemplo" class="py-2.5 px-2 text-slate-500 hover:text-slate-800 whitespace-nowrap rounded-t-lg transition flex items-center gap-1">
-                <i class="fa-solid fa-calculator"></i> <span>Ejemplo</span>
-              </button>
-              <button onclick="switchTab('${s.id}', 'pago')" id="tab-btn-${s.id}-pago" class="py-2.5 px-2 text-slate-500 hover:text-slate-800 whitespace-nowrap rounded-t-lg transition flex items-center gap-1">
-                <i class="fa-solid fa-calendar-check"></i> <span>Pago</span>
-              </button>
-            </div>
+        const TIENDAS_EEPR = [18, 20, 24, 26, 34, 44, 63, 67, 79, 90, 91, 106, 112, 128, 131, 136, 162, 171, 177, 180, 181, 189, 193, 196, 233, 234, 245, 246, 248, 251, 258, 280, 301, 335, 342, 344, 352, 355, 359, 363, 367, 382, 383, 393, 401, 430, 434, 457, 458, 466, 473, 485, 499, 780, 876, 881, 890, 892, 913, 954, 960, 972, 988, 1004, 1005, 1009, 1016, 1028, 1099, 1103, 1111, 1115, 1118, 1120, 1135, 1136, 1145, 1151, 1173, 1179, 1194, 1201, 1225, 1235, 1237, 1249, 1252, 1253, 1297, 1317, 1339, 1342, 1346, 1379, 1385, 1390, 1411, 1452, 6514, 6519, 6526, 6543, 6596, 6731, 7600, 7610, 7634, 7640, 7684, 7685, 7686, 7701, 7720, 7733, 7762, 7784, 7794, 7897, 7961];
 
-            <!-- Tab Contents -->
-            <div class="p-3.5 sm:p-5 flex-grow text-xs text-slate-700 bg-white">
-              
-              <!-- Tab 1: Indicadores -->
-              <div id="tab-content-${s.id}-indicadores" class="space-y-3">
-                <h4 class="font-bold text-slate-900 uppercase text-[10px] sm:text-[11px] tracking-wider text-coppel-blue">Indicadores y Tabuladores del Esquema</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                  ${s.indicators.map(i => `
-                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
-                      <div class="flex items-center justify-between mb-1 gap-1">
-                        <strong class="text-slate-900 font-bold truncate">${i.name}</strong>
-                        <span class="text-[9px] bg-blue-100 text-coppel-blue font-extrabold px-1.5 py-0.5 rounded flex-shrink-0">${i.type}</span>
-                      </div>
-                      <p class="text-slate-600 text-[11px] leading-snug">${i.detail}</p>
+        const TIENDAS_ACM = [746, 6627, 6662, 6664, 6665, 6706, 6709, 6719, 6744, 6753, 6759, 6766, 6767, 6774, 6776, 6778, 6780, 6782, 6790, 6792, 6795, 6812, 6815, 6816, 6819, 6823, 6838, 6846, 6847, 6853, 6855, 6860, 6861, 6867, 6869, 6885, 6886, 6889, 6890, 6891, 6895, 7574, 7802, 7867, 7885, 7909, 7921, 7940, 7957, 7958, 7977];
+
+        const TIENDAS_AMPR = [558, 632, 6611, 6615, 6617, 6619, 6620, 6622, 6636, 6639, 6645, 6650, 6652, 6653, 6655, 6660, 6661, 6669, 6670, 6677, 6679, 6682, 6684, 6687, 6688, 6689, 6691, 6696, 6699, 6707, 6708, 6710, 6711, 6712, 6716, 6722, 6734, 6749, 6763, 6764, 6775, 6777, 7573, 7742, 7743, 7744, 7745, 7791, 7801, 7841, 7854, 7861, 7862, 7869, 7873, 7874, 7875, 7876, 7877, 7882, 7883, 7887, 7902, 7904, 7906, 7913, 7914, 7918, 7922, 7925, 7929, 7941, 7949, 7951, 7955, 7956, 7959, 7962, 7968, 7969, 7971, 7972, 7974, 7975, 7980, 7984, 7985, 7986, 7990, 7995, 7997, 7999];
+
+        const ESQUEMAS_DB = {
+            "TRNA-001": { id: "TRNA-001", nombre: "Tradicional Nacional-001", sistema: "Tradicional", estatus: "Nacional", puestos: ["Asesor ventas #89", "Asesor Motos # 269", "Asesor tienda # 204", "Asesor Ventas Muebles #1", "Asesor Ventas Ropa #17", "Asesor Ventas Zapatería #131", "Asesor linea Blanca #164", "Asesor Joyería y Relojería #278", "Asesor Electrónica #439"], periodicidad: "Mensual", glosario: [{ concepto: "Venta centro", def: "Venta del centro asignado (ropa, muebles, etc.)." }, { concepto: "Venta tienda", def: "Venta total realizada en la tienda." }, { concepto: "Clientes nuevos", def: "Clientes por su crédito primera vez." }, { concepto: "Cobranza", def: "Monto total cobrado en la tienda." }], ejemploTexto: "TRNA-001: Venta Tienda $18.5M (25 Colab) => Prom $740k. Cumplimiento Centro 102% => $1,175. Vta Tienda 118% => $500. Clientes (112%) => $250. Cobranza (96%) => $200. Seguros/Servicios = $482. TOTAL = $2,607.", calcDefaults: { planta: 25, vtaTda: 18500000, vtaCtr: 3293124, metaCtr: 3228553 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-002": { id: "TRNA-002", nombre: "Tradicional Nacional-002", sistema: "Tradicional", estatus: "Nacional", puestos: ["Cajero Multifuncional #21"], periodicidad: "Mensual", glosario: [{ concepto: "Venta tienda", def: "Venta realizada en toda la tienda." }, { concepto: "Cobranza", def: "Monto de cobranza recuperado en tienda." }], ejemploTexto: "TRNA-002: Venta Tienda 118% => $500. Cobranza 107% => $400. Clientes Nuevos 112% => $250. Seguros/Servicios = $482. TOTAL = $1,632.", calcDefaults: { vtaTdaR: 7372245, metaTdaR: 6247665 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-003": { id: "TRNA-003", nombre: "Tradicional Nacional-003", sistema: "Tradicional", estatus: "Nacional", puestos: ["Optometrista A #169"], periodicidad: "Mensual", glosario: [{ concepto: "Venta de Óptica", def: "Venta de productos y servicios de Óptica." }], ejemploTexto: "TRNA-003: Óptica $970k / $1M Meta = 96%. Cruce Tabulador => $1,500. Vta Tienda 105% => $300. Clientes 102% => $150. Cobranza 96% => $200. TOTAL = $2,150.", calcDefaults: { vtaOpt: 970792, metaOpt: 1001242 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-004": { id: "TRNA-004", nombre: "Tradicional Nacional-004", sistema: "Tradicional", estatus: "Nacional", puestos: ["Optometrista B #170"], periodicidad: "Mensual", glosario: [{ concepto: "Venta de Óptica", def: "Venta de la categoría de Óptica." }], ejemploTexto: "TRNA-004: Óptica $970k / $1M Meta = 96%. Cruce Tabulador => $750. Vta Tienda 105% => $300. Clientes 102% => $150. Cobranza 96% => $200. TOTAL = $1,400.", calcDefaults: { vtaOpt: 970792, metaOpt: 1001242 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-005": { id: "TRNA-005", nombre: "Tradicional Nacional-005", sistema: "Tradicional", estatus: "Nacional", puestos: ["Asesor Telcel #202"], periodicidad: "Mensual", glosario: [{ concepto: "Venta Telcel", def: "Venta telefonía Telcel, AT&T y Movistar." }], ejemploTexto: "TRNA-005: Telcel 96.96% ($970k en rango $1M-$1.6M) => $900. Vta Tienda 105% => $300. Clientes 102.8% => $150. Cobranza 96% => $200. TOTAL = $1,550.", calcDefaults: { vtaTel: 970792, metaTel: 1001242 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-006": { id: "TRNA-006", nombre: "Tradicional Nacional-006", sistema: "Tradicional", estatus: "Nacional", puestos: ["Asesor de telefonía libre #453"], periodicidad: "Mensual", glosario: [{ concepto: "Venta Telefonía Libre", def: "Venta categoría telefonía libre." }], ejemploTexto: "TRNA-006: Telefonía Libre 96.96% ($970k en rango $600k-$1M) => $1,050. Vta Tienda 105% => $300. Clientes 102.8% => $150. Cobranza 96% => $200. TOTAL = $1,700.", calcDefaults: { vtaTelL: 970792, metaTelL: 1001242 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-007": { id: "TRNA-007", nombre: "Tradicional Nacional-007", sistema: "Tradicional", estatus: "Nacional", puestos: ["Asesor Tel Suplente #205"], periodicidad: "Mensual", glosario: [{ concepto: "Telefonía Total", def: "Venta total categoría telefonía." }], ejemploTexto: "TRNA-007: Telefonía Total 97.00% => $550. Vta Tienda 105% => $300. Clientes 102.8% => $150. Cobranza 96% => $200. TOTAL = $1,200.", calcDefaults: { vtaTelTot: 970792, metaTelTot: 1001242 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-008": { id: "TRNA-008", nombre: "Tradicional Nacional-008", sistema: "Tradicional", estatus: "Nacional", puestos: ["Almacenista #5", "Auxiliar de piso #11", "Paqueteria #19", "Serv y Gar # 463"], periodicidad: "Mensual", glosario: [{ concepto: "Venta tienda", def: "Venta realizada en la tienda." }], ejemploTexto: "TRNA-008: Vta Tienda 118% => $400. Clientes 112% => $200. Cobranza 96.8% => $150. Seguros/Servicios = $352. TOTAL = $1,102.", calcDefaults: { vtaTda: 7372245, metaTda: 6247665 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-009": { id: "TRNA-009", nombre: "Tradicional Nacional-009", sistema: "Tradicional", estatus: "Nacional", puestos: ["Gte Suplente #36", "Gerente Tienda Muebles #1031", "Gerente Tienda Ropa #1032"], periodicidad: "Mensual", glosario: [{ concepto: "Multiplicador Faltante", def: "Factor 1.1 si faltante < 1%." }], ejemploTexto: "TRNA-009: Centro 102% ($700k+) => $1,950. Vta Tienda 118% => $1,050. Clientes 112% => $700. Cobranza 107% => $550. Suma = $4,250. Multiplicador Faltante (0.95%) x1.1 => TOTAL = $4,675.", calcDefaults: { vtaCtr: 3293124, metaCtr: 3228553 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-G01": { id: "TRNA-G01", nombre: "Tradicional Nacional-G01", sistema: "Tradicional", estatus: "Nacional", puestos: ["Gerente General de tienda #466"], periodicidad: "Trimestral", glosario: [{ concepto: "Venta Tienda Trimestral", def: "Venta total trimestral de la tienda." }], ejemploTexto: "TRNA-G01: Vta Tienda 99.6% => $6,500. Cobranza 98.44% => $2,400. Clientes 110% => $6,500. TOTAL TRIMESTRAL = $15,400.", calcDefaults: { vtaTdaR: 24900000, vtaTdaM: 25500000 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-G02": { id: "TRNA-G02", nombre: "Tradicional Nacional-G02", sistema: "Tradicional", estatus: "Nacional", puestos: ["Gerente Zona tienda #697"], periodicidad: "Trimestral", glosario: [{ concepto: "Multiplicador Zona", def: "15% si >=25% tiendas aprueban candados." }], ejemploTexto: "TRNA-G02: Venta Zona 102% => $14,500. Cobranza 105% => $10,500. Clientes 105% => $9,000. Suma = $34,000. Multiplicador 15% => TOTAL TRIMESTRAL = $39,100.", calcDefaults: { vtaZonaR: 446000000, vtaZonaM: 438000000 }, tiendas: TIENDAS_GENERALES },
+            "TRNA-G03": { id: "TRNA-G03", nombre: "Tradicional Nacional-G03", sistema: "Tradicional", estatus: "Nacional", puestos: ["Gerente Regional de tiendas #2844"], periodicidad: "Trimestral", glosario: [{ concepto: "Multiplicador Región", def: "15% si >=25% tiendas aprueban candados." }], ejemploTexto: "TRNA-G03: Venta Región 102% => $29,000. Cobranza 99% => $8,400. Clientes 101% => $14,500. Suma = $51,900. Multiplicador 15% ($7,785) => TOTAL = $59,685.", calcDefaults: { vtaRegR: 4000000000, vtaRegM: 3900000000 }, tiendas: TIENDAS_GENERALES },
+            "EENA-001": { id: "EENA-001", nombre: "Equipos Nacional-001", sistema: "EE ( Equipos enfocados )", estatus: "EE Nacional", puestos: ["Asesor ventas #89", "Asesor Motos # 269", "Asesor tienda # 204", "Asesor Ventas Muebles #1", "Asesor Ventas Ropa #17", "Asesor Ventas Zapatera #131", "Asesor linea Blanca #164", "Asesor Joyería y Relojería #278", "Asesor Electrónica #439", "Cajero Multifuncional #21", "Almacenista #5", "Auxiliar de piso #11", "Paqueteria #19", "Serv y Gar # 463"], periodicidad: "Mensual", glosario: [{ concepto: "Venta equipo", def: "Venta del equipo asignado." }], ejemploTexto: "EENA-001: Vta Equipo 102% => $1,000. Vta Tienda 118% => $500. Clientes 111% => $200. Cobranza 96% => $200. Comisiones = $482. TOTAL = $2,382.", calcDefaults: { vtaEq: 18500000, metaEq: 18137000 }, tiendas: TIENDAS_GENERALES },
+            "EENA-003": { id: "EENA-003", nombre: "Equipos Nacional-003", sistema: "EE ( Equipos enfocados )", estatus: "EE Nacional", puestos: ["Optometrista A #169", "Optometrista B #170"], periodicidad: "Mensual", glosario: [{ concepto: "Venta Óptica", def: "Monto vendido categoría Óptica." }], ejemploTexto: "EENA-003: Óptica 97% ($120k+) => $920. Vta Tienda 105% => $300. Clientes 102% => $100. Cobranza 96% => $200. Servicios = $235. TOTAL = $1,755.", calcDefaults: { vtaOpt: 970792, metaOpt: 1001242 }, tiendas: TIENDAS_GENERALES },
+            "EENA-005": { id: "EENA-005", nombre: "Equipos Nacional-005", sistema: "EE ( Equipos enfocados )", estatus: "EE Nacional", puestos: ["Asesor Telcel #202"], periodicidad: "Mensual", glosario: [{ concepto: "Venta Telefonía", def: "Monto de telefonía de todas las marcas." }], ejemploTexto: "EENA-005: Telefonía 97% ($800k-$1.6M) => $1,280. Vta Tienda 105% => $300. Clientes 102% => $100. Cobranza 96% => $200. Seguros/Servicios = $276. TOTAL = $2,156.", calcDefaults: { vtaTel: 970792, metaTel: 1001242 }, tiendas: TIENDAS_GENERALES },
+            "EENA-006": { id: "EENA-006", nombre: "Equipos Nacional-006", sistema: "EE ( Equipos enfocados )", estatus: "EE Nacional", puestos: ["Asesor de telefonía libre #453", "Asesor Tel Suplente #205"], periodicidad: "Mensual", glosario: [{ concepto: "Venta Telefonía", def: "Monto telefonía libre." }], ejemploTexto: "EENA-006: Telefonía 97% ($800k-$1.6M) => $1,280. Vta Tienda 105% => $300. Clientes 102% => $100. Cobranza 96% => $200. Seguros = $276. TOTAL = $2,156.", calcDefaults: { vtaTel: 970792, metaTel: 1001242 }, tiendas: TIENDAS_GENERALES },
+            "EENA-009": { id: "EENA-009", nombre: "Equipos Nacional-009", sistema: "EE ( Equipos enfocados )", estatus: "EE Nacional", puestos: ["Gte Suplente #36", "Gerente Tienda Muebles #1031", "Gerente Tienda Ropa #1032"], periodicidad: "Mensual", glosario: [{ concepto: "Evaluación Objetiva", def: "Multiplicador según resultado." }], ejemploTexto: "EENA-009: Venta Tienda 102% => $3,739. Evaluación Objetiva 97.65% => Multiplicador 1.5x. TOTAL A PAGAR = $5,608.50.", calcDefaults: { vtaTda: 18500000, metaTda: 18137000 }, tiendas: TIENDAS_GENERALES },
+            "EEPR-001": { id: "EEPR-001", nombre: "Equipos Prueba-001", sistema: "EE ( Equipos enfocados )", estatus: "EE Prueba 1", puestos: ["Asesor ventas #89", "Asesor Motos # 269", "Asesor tienda # 204", "Asesor Ventas Muebles #1", "Asesor Ventas Ropa #17", "Asesor Ventas Zapatera #131", "Asesor linea Blanca #164", "Asesor Joyería y Relojería #278", "Asesor Electrónica #439", "Cajero Multifuncional #21", "Almacenista #5", "Auxiliar de piso #11", "Paqueteria #19", "Serv y Gar # 463"], periodicidad: "Mensual", glosario: [{ concepto: "Multiplicadores", def: "+20% Crédito y +20% Digital." }], ejemploTexto: "EEPR-001: Vta Equipo 103% => $1,300. Multiplicadores (+40%) => $1,820. Comisiones = $2,980.75. Vta Tienda 100% (+20% extra) => TOTAL = $5,760.90.", calcDefaults: { vtaEqR: 1032340, vtaEqM: 1001242 }, tiendas: TIENDAS_EEPR },
+            "EEPR-001B": { id: "EEPR-001B", nombre: "Equipos Prueba-001B", sistema: "EE ( Equipos enfocados )", estatus: "EE Prueba 2", puestos: ["Asesor Motos # 269"], periodicidad: "Mensual", glosario: [{ concepto: "Conversión Seguros", def: "Factor por conversión a seguros de moto." }], ejemploTexto: "EEPR-001B: Vta Categoría 107% (Conversión 66%) => Factor 0.0006 x $2.24M = $1,348. Seguros Moto RC/Plus = $656. TOTAL = $2,004.", calcDefaults: { vtaCatR: 2247000, vtaCatM: 2100000 }, tiendas: [33, 43, 50, 133, 195, 231, 270, 276, 291, 294, 295, 297, 308, 326, 336, 345, 359, 366, 379, 384, 388, 398, 409, 418, 427, 445, 454, 456, 489, 498, 861, 869, 873, 893, 897, 903, 913, 929, 936, 942, 946, 952, 1036, 1043, 1122, 1230, 1285, 1339, 1359, 6509] },
+            "EEPR-003": { id: "EEPR-003", nombre: "Equipos Prueba-003", sistema: "EE ( Equipos enfocados )", estatus: "EE Prueba 1", puestos: ["Optometrista A #169", "Optometrista B #170"], periodicidad: "Mensual", glosario: [{ concepto: "Venta Óptica", def: "Monto venta de equipo óptica." }], ejemploTexto: "EEPR-003: Vta Óptica 99% => Base $1,100. Multiplicadores (+40%) => $1,540. Comisiones = $2,980.75. Vta Tienda 100% (+20% extra) => TOTAL = $5,424.90.", calcDefaults: { vtaOptR: 144100, vtaOptM: 145120 }, tiendas: TIENDAS_EEPR },
+            "EEPR-005": { id: "EEPR-005", nombre: "Equipos Prueba-005", sistema: "EE ( Equipos enfocados )", estatus: "EE Prueba 1", puestos: ["Asesor Telcel #202", "Asesor de telefonía libre #453", "Asesor Tel Suplente #205"], periodicidad: "Mensual", glosario: [{ concepto: "Venta Telefonía", def: "Monto venta equipo telefonía." }], ejemploTexto: "EEPR-005: Vta Telefonía 106% => Base $1,450. Multiplicadores (+40%) => $2,030. Comisiones = $2,342.80. Vta Tienda 100% (+20% extra) => TOTAL = $5,247.36.", calcDefaults: { vtaTelR: 1062765, vtaTelM: 1001242 }, tiendas: TIENDAS_EEPR },
+            "EEPR-009": { id: "EEPR-009", nombre: "Equipos Prueba-009", sistema: "EE ( Equipos enfocados )", estatus: "EE Prueba 1", puestos: ["Gte Suplente #36", "Gerente Tienda Muebles #1031", "Gerente Tienda Ropa #1032"], periodicidad: "Mensual", glosario: [{ concepto: "Evaluación Objetiva", def: "Multiplicador sobre venta tienda." }], ejemploTexto: "EEPR-009: Venta Tienda 102% => $3,739. Evaluación Objetiva 97.65% => Multiplicador 1.5x => TOTAL = $5,608.50.", calcDefaults: { vtaTdaR: 2345000, vtaTdaM: 2395000 }, tiendas: TIENDAS_EEPR },
+            "AMNA-001": { id: "AMNA-001", nombre: "Agencias Motos Nacional-001", sistema: "ACM( Agencias Coppel Motos)", estatus: "ACM Nacional", puestos: ["Asesor Motos # 269"], periodicidad: "Mensual", glosario: [{ concepto: "Comisión Base", def: "0.0055 sobre ventas." }], ejemploTexto: "AMNA-001: Venta Asesor $471,353 x 0.0055 = $2,592. ISA 100% (x1.10) x Seguros 75% (x1.10) x Agencia 109% (x1.05) => TOTAL = $3,293.14.", calcDefaults: { vtaInd: 471353, isa: 100, seg: 12, mot: 16, cumpAg: 109 }, tiendas: TIENDAS_ACM },
+            "AMNA-009": { id: "AMNA-009", nombre: "Agencias Motos Nacional-009", sistema: "ACM( Agencias Coppel Motos)", estatus: "ACM Nacional", puestos: ["Gerente Tienda Motos #1039"], periodicidad: "Mensual", glosario: [{ concepto: "Incentivo Agencia", def: "Suma de Venta + NPS + Seguros x Ev. Objetiva." }], ejemploTexto: "AMNA-009: Venta Agencia 109% => $4,000. NPS 100% => $550. Seguros 54% => $500. Suma = $5,050. Evaluación Objetiva (94) x1.2 => TOTAL = $6,060.", calcDefaults: { vtaAgR: 1300000, vtaAgM: 1200000 }, tiendas: TIENDAS_ACM },
+            "AMPR-001": { id: "AMPR-001", nombre: "Agencias Motos Prueba-001", sistema: "ACM( Agencias Coppel Motos)", estatus: "ACM Prueba 1", puestos: ["Asesor Motos # 269"], periodicidad: "Mensual", glosario: [{ concepto: "Comisión Venta Individual", def: "Según cumplimiento agencia y conversión seguros." }], ejemploTexto: "AMPR-001: Venta Asesor $247,500 x 0.0045 = $1,113.75. Clientes $200 + Cobranza $250 + NPS $100 + Seguros = $2,530.50. TOTAL = $4,194.25.", calcDefaults: { vtaAsesor: 247500, metaAsesor: 275000 }, tiendas: TIENDAS_AMPR },
+            "AMPR-009": { id: "AMPR-009", nombre: "Agencias Motos Prueba-009", sistema: "ACM( Agencias Coppel Motos)", estatus: "ACM Prueba 1", puestos: ["Gerente Tienda Motos #1039"], periodicidad: "Mensual", glosario: [{ concepto: "Incentivo Tabulado", def: "Venta + Clientes + Cobranza + NPS + Seguros." }], ejemploTexto: "AMPR-009: Venta Agencia 108% => $4,000. Clientes 105% => $1,000. Cobranza 105% => $2,000. NPS 83% => $500. Seguros 85% => $600. TOTAL = $8,100.", calcDefaults: { vtaAgR: 1300000, vtaAgM: 1200000 }, tiendas: TIENDAS_AMPR }
+        };
+
+        const MATRIX_PUESTOS = [
+            { puesto: "Asesor ventas #89", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor Motos # 269", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "EEPR-001B", acmNac: "AMNA-001", acmP1: "AMPR-001" },
+            { puesto: "Asesor tienda # 204", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor Ventas Muebles #1", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor Ventas Ropa #17", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor Ventas Zapatería #131", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor linea Blanca #164", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor Joyería y Relojería #278", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor Electrónica #439", trad: "TRNA-001", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Cajero Multifuncional #21", trad: "TRNA-002", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Optometrista A #169", trad: "TRNA-003", eeNac: "EENA-003", eeP1: "EEPR-003", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Optometrista B #170", trad: "TRNA-004", eeNac: "EENA-003", eeP1: "EEPR-003", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor Telcel #202", trad: "TRNA-005", eeNac: "EENA-005", eeP1: "EEPR-005", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor de telefonía libre #453", trad: "TRNA-006", eeNac: "EENA-006", eeP1: "EEPR-005", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Asesor Tel Suplente #205", trad: "TRNA-007", eeNac: "EENA-006", eeP1: "EEPR-005", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Almacenista #5", trad: "TRNA-008", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Auxiliar de piso #11", trad: "TRNA-008", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Paqueteria #19", trad: "TRNA-008", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Serv y Gar # 463", trad: "TRNA-008", eeNac: "EENA-001", eeP1: "EEPR-001", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Gte Suplente #36", trad: "TRNA-009", eeNac: "EENA-009", eeP1: "EEPR-009", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Gerente Tienda Muebles #1031", trad: "TRNA-009", eeNac: "EENA-009", eeP1: "EEPR-009", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Gerente Tienda Ropa #1032", trad: "TRNA-009", eeNac: "EENA-009", eeP1: "EEPR-009", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Gerente Tienda Motos #1039", trad: "No Aplica", eeNac: "No Aplica", eeP1: "No Aplica", eeP2: "No Aplica", acmNac: "AMNA-009", acmP1: "AMPR-009" },
+            { puesto: "Gerente General de tienda #466", trad: "TRNA-G01", eeNac: "TRNA-G01", eeP1: "TRNA-G01", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Gerente Zona tienda #697", trad: "TRNA-G02", eeNac: "TRNA-G02", eeP1: "TRNA-G02", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" },
+            { puesto: "Gerente Regional de tiendas #2844", trad: "TRNA-G03", eeNac: "TRNA-G03", eeP1: "TRNA-G03", eeP2: "No Aplica", acmNac: "No Aplica", acmP1: "No Aplica" }
+        ];
+
+        let MASTER_SISTEMAS = ["Tradicional", "EE ( Equipos enfocados )", "ACM( Agencias Coppel Motos)"];
+        let MASTER_ESQUEMAS = Object.keys(ESQUEMAS_DB);
+        let MASTER_PUESTOS = Array.from(new Set(Object.values(ESQUEMAS_DB).flatMap(e => e.puestos)));
+        let MASTER_TIENDAS = Array.from(new Set(Object.values(ESQUEMAS_DB).flatMap(e => e.tiendas))).sort((a,b)=>a-b);
+
+        let state = { sistemas: [], esquemas: [], puestos: [], tiendas: [] };
+
+        window.onload = function() {
+            renderFilterDropdowns();
+            renderMatrixTable();
+            updateCascadeSelection();
+        };
+
+        function renderFilterDropdowns() {
+            document.getElementById('opts-sistema').innerHTML = MASTER_SISTEMAS.map(s => `
+                <label class="flex items-center space-x-2 text-xs text-slate-800 hover:bg-slate-100 p-1 rounded cursor-pointer">
+                    <input type="checkbox" value="${s}" onchange="onFilterChange('sistema', '${s}')" class="chk-sistema rounded text-corp-blue">
+                    <span>${s}</span>
+                </label>`).join('');
+
+            document.getElementById('opts-esquema').innerHTML = MASTER_ESQUEMAS.map(e => `
+                <label class="flex items-center space-x-2 text-xs text-slate-800 hover:bg-slate-100 p-1 rounded cursor-pointer">
+                    <input type="checkbox" value="${e}" onchange="onFilterChange('esquema', '${e}')" class="chk-esquema rounded text-corp-blue">
+                    <span>${e} (${ESQUEMAS_DB[e].nombre})</span>
+                </label>`).join('');
+
+            document.getElementById('opts-puesto').innerHTML = MASTER_PUESTOS.map(p => `
+                <label class="flex items-center space-x-2 text-xs text-slate-800 hover:bg-slate-100 p-1 rounded cursor-pointer">
+                    <input type="checkbox" value="${p}" onchange="onFilterChange('puesto', '${p}')" class="chk-puesto rounded text-corp-blue">
+                    <span>${p}</span>
+                </label>`).join('');
+
+            document.getElementById('opts-tienda').innerHTML = MASTER_TIENDAS.map(t => `
+                <label class="flex items-center space-x-2 text-xs text-slate-800 hover:bg-slate-100 p-1 rounded cursor-pointer">
+                    <input type="checkbox" value="${t}" onchange="onFilterChange('tienda', '${t}')" class="chk-tienda rounded text-corp-blue">
+                    <span>Tienda ${t}</span>
+                </label>`).join('');
+        }
+
+        function toggleDropdown(id) {
+            let el = document.getElementById(id);
+            let isShow = el.classList.contains('show');
+            document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+            if (!isShow) el.classList.add('show');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#dropdown-sistema-container') &&
+                !e.target.closest('#dropdown-esquema-container') &&
+                !e.target.closest('#dropdown-puesto-container') &&
+                !e.target.closest('#dropdown-tienda-container')) {
+                document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        function onFilterChange(dim, val) {
+            let selected = Array.from(document.querySelectorAll(`.chk-${dim}:checked`)).map(c => c.value);
+
+            if (dim === 'sistema') {
+                state.sistemas = selected;
+                if (state.sistemas.length > 0) {
+                    let matchingEsquemas = Object.values(ESQUEMAS_DB).filter(e => state.sistemas.includes(e.sistema));
+                    state.esquemas = matchingEsquemas.map(e => e.id);
+                    state.puestos = Array.from(new Set(matchingEsquemas.flatMap(e => e.puestos)));
+                    state.tiendas = Array.from(new Set(matchingEsquemas.flatMap(e => e.tiendas)));
+                } else { state.esquemas = []; state.puestos = []; state.tiendas = []; }
+            } else if (dim === 'esquema') {
+                state.esquemas = selected;
+                if (state.esquemas.length > 0) {
+                    let matching = Object.values(ESQUEMAS_DB).filter(e => state.esquemas.includes(e.id));
+                    state.puestos = Array.from(new Set(matching.flatMap(e => e.puestos)));
+                    state.tiendas = Array.from(new Set(matching.flatMap(e => e.tiendas)));
+                }
+            } else if (dim === 'puesto') {
+                state.puestos = selected;
+                if (state.puestos.length > 0) {
+                    let matching = Object.values(ESQUEMAS_DB).filter(e => e.puestos.some(p => state.puestos.includes(p)));
+                    state.esquemas = matching.map(e => e.id);
+                    state.tiendas = Array.from(new Set(matching.flatMap(e => e.tiendas)));
+                }
+            } else if (dim === 'tienda') {
+                state.tiendas = selected.map(Number);
+                if (state.tiendas.length > 0) {
+                    let matching = Object.values(ESQUEMAS_DB).filter(e => e.tiendas.some(t => state.tiendas.includes(t)));
+                    state.esquemas = matching.map(e => e.id);
+                    state.puestos = Array.from(new Set(matching.flatMap(e => e.puestos)));
+                }
+            }
+
+            syncCheckboxes();
+            updateCascadeSelection();
+        }
+
+        function selectAllDim(dim, selectAll) {
+            let chks = document.querySelectorAll(`.chk-${dim}`);
+            chks.forEach(c => c.checked = selectAll);
+            let vals = selectAll ? Array.from(chks).map(c => c.value) : [];
+
+            if (dim === 'sistema') state.sistemas = vals;
+            if (dim === 'esquema') state.esquemas = vals;
+            if (dim === 'puesto') state.puestos = vals;
+            if (dim === 'tienda') state.tiendas = vals.map(Number);
+
+            syncCheckboxes();
+            updateCascadeSelection();
+        }
+
+        function syncCheckboxes() {
+            document.querySelectorAll('.chk-sistema').forEach(c => c.checked = state.sistemas.includes(c.value));
+            document.querySelectorAll('.chk-esquema').forEach(c => c.checked = state.esquemas.includes(c.value));
+            document.querySelectorAll('.chk-puesto').forEach(c => c.checked = state.puestos.includes(c.value));
+            document.querySelectorAll('.chk-tienda').forEach(c => c.checked = state.tiendas.includes(Number(c.value)));
+        }
+
+        function resetAllFilters() {
+            state.sistemas = []; state.esquemas = []; state.puestos = []; state.tiendas = [];
+            syncCheckboxes();
+            updateCascadeSelection();
+        }
+
+        function updateCascadeSelection() {
+            document.getElementById('label-sistema').innerText = state.sistemas.length === 0 ? "Ninguno seleccionado" : `${state.sistemas.length} seleccionado(s)`;
+            document.getElementById('label-esquema').innerText = state.esquemas.length === 0 ? "Ninguno seleccionado" : `${state.esquemas.length} seleccionado(s)`;
+            document.getElementById('label-puesto').innerText = state.puestos.length === 0 ? "Ninguno seleccionado" : `${state.puestos.length} seleccionado(s)`;
+            document.getElementById('label-tienda').innerText = state.tiendas.length === 0 ? "Ninguna seleccionada" : `${state.tiendas.length} seleccionada(s)`;
+
+            let isNothing = state.sistemas.length === 0 && state.esquemas.length === 0 && state.puestos.length === 0 && state.tiendas.length === 0;
+
+            if (isNothing) {
+                document.getElementById('summary-bar-text').innerText = "Sin selección activa (Usa los filtros superiores para desplegar información).";
+                document.getElementById('btn-detail-summary').classList.add('hidden');
+                document.getElementById('summary-detail-panel').classList.add('hidden');
+            } else {
+                let textResumen = `Esquemas Filtrados: [${state.esquemas.length ? state.esquemas.join(', ') : 'Todos'}] | Puestos Abarcados: ${state.puestos.length} puestos | Tiendas Aplicables: ${state.tiendas.length} tiendas en total.`;
+                document.getElementById('summary-bar-text').innerText = textResumen;
+                document.getElementById('btn-detail-summary').classList.remove('hidden');
+
+                document.getElementById('detail-sistemas').innerHTML = `<strong>Sistemas:</strong> ${state.sistemas.length ? state.sistemas.join(', ') : 'Todos los sistemas'}`;
+                document.getElementById('detail-esquemas').innerHTML = `<strong>Esquemas:</strong> ${state.esquemas.length ? state.esquemas.join(', ') : 'Todos los esquemas'}`;
+                document.getElementById('detail-puestos').innerHTML = `<strong>Puestos (${state.puestos.length}):</strong> ${state.puestos.length ? state.puestos.join(', ') : 'Todos los puestos'}`;
+                document.getElementById('detail-tiendas').innerHTML = `<strong>Tiendas (${state.tiendas.length}):</strong> ${state.tiendas.length ? state.tiendas.slice(0, 30).join(', ') + (state.tiendas.length > 30 ? '...' : '') : 'Todas las tiendas'}`;
+            }
+
+            let filtered = Object.values(ESQUEMAS_DB).filter(e => {
+                let mSys = state.sistemas.length === 0 || state.sistemas.includes(e.sistema);
+                let mEsq = state.esquemas.length === 0 || state.esquemas.includes(e.id);
+                let mPst = state.puestos.length === 0 || e.puestos.some(p => state.puestos.includes(p));
+                let mTda = state.tiendas.length === 0 || e.tiendas.some(t => state.tiendas.includes(t));
+                return mSys && mEsq && mPst && mTda;
+            });
+
+            renderExplorador(isNothing ? [] : filtered);
+        }
+
+        function toggleDetailSummary() {
+            let panel = document.getElementById('summary-detail-panel');
+            panel.classList.toggle('hidden');
+        }
+
+        function renderExplorador(list) {
+            let container = document.getElementById('cards-container');
+            let emptyState = document.getElementById('empty-state');
+
+            if (list.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            container.innerHTML = list.map(esq => `
+                <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden card-print space-y-4 p-6" id="card-${esq.id}">
+                    <div class="flex flex-wrap items-center justify-between border-b pb-4 gap-2">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-corp-blue text-white font-bold text-xs px-2.5 py-1 rounded-md uppercase">${esq.sistema}</span>
+                                <span class="bg-amber-100 text-amber-800 font-bold text-xs px-2.5 py-1 rounded-md">${esq.estatus}</span>
+                            </div>
+                            <h2 class="text-2xl font-bold text-corp-blue mt-1">${esq.nombre} <span class="text-sm font-normal text-slate-500">(ID: ${esq.id})</span></h2>
+                        </div>
+                        <div class="flex items-center space-x-2 no-print">
+                            <button onclick="openCalculator('${esq.id}')" class="px-3 py-1.5 bg-corp-accent hover:bg-corp-accentHover text-corp-blue font-bold rounded text-xs transition flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-calculator"></i> Calculadora
+                            </button>
+                            <button onclick="exportSingleSchemePNG('${esq.id}')" class="px-3 py-1.5 bg-corp-blue hover:bg-corp-blueDark text-white font-bold rounded text-xs transition flex items-center gap-1 shadow-sm">
+                                <i class="fa-solid fa-file-export"></i> Previsualizar y Exportar PNG
+                            </button>
+                        </div>
                     </div>
-                  `).join('')}
+
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-corp-blue text-sm uppercase tracking-wide flex items-center gap-2">
+                            <i class="fa-solid fa-table"></i> Tabulador Oficial de Incentivos por Indicador
+                        </h4>
+                        ${getTabuladoresHTML(esq.id)}
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2">
+                            <h5 class="font-bold text-xs uppercase text-corp-blue flex items-center gap-1">
+                                <i class="fa-solid fa-users"></i> Puestos Aplicables
+                            </h5>
+                            <div class="flex flex-wrap gap-1">
+                                ${esq.puestos.map(p => `<span class="bg-white border text-slate-700 text-xs px-2 py-0.5 rounded font-medium">${p}</span>`).join('')}
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 p-4 rounded-lg border border-amber-200 space-y-2">
+                            <h5 class="font-bold text-xs uppercase text-amber-900 flex items-center gap-1">
+                                <i class="fa-solid fa-lightbulb"></i> Ejemplo de Cálculo (Valores Prácticos)
+                            </h5>
+                            <p class="text-xs text-slate-800 whitespace-pre-line font-mono leading-relaxed">${esq.ejemploTexto}</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t">
+                        <h5 class="font-bold text-xs uppercase text-corp-blue flex items-center gap-1">
+                            <i class="fa-solid fa-book"></i> Glosario COMPLETO de Términos
+                        </h5>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            ${esq.glosario.map(g => `
+                                <div class="bg-slate-50 p-2 rounded text-xs border border-slate-200">
+                                    <strong class="text-corp-blue block">${g.concepto}:</strong>
+                                    <span class="text-slate-600">${g.def}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t tiendas-container">
+                        <h5 class="font-bold text-xs uppercase text-corp-blue flex items-center gap-1">
+                            <i class="fa-solid fa-store"></i> Listado Completo de Tiendas Aplicables (${esq.tiendas.length} Sucursales)
+                        </h5>
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 max-h-32 overflow-y-auto text-xs text-slate-600 font-mono leading-relaxed">
+                            ${esq.tiendas.join(', ')}
+                        </div>
+                    </div>
                 </div>
-
-                <div class="pt-2">
-                  <h5 class="font-bold text-slate-800 text-[11px] mb-1">Glosario de Términos:</h5>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                    ${s.glossary.map(g => `
-                      <div class="text-[11px] bg-slate-50 p-2 rounded-lg border border-slate-100">
-                        <strong class="text-slate-800">${g.concept}:</strong> ${g.def}
-                      </div>
-                    `).join('')}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tab 2: Reglas -->
-              <div id="tab-content-${s.id}-reglas" class="hidden space-y-2.5">
-                <h4 class="font-bold text-slate-900 uppercase text-[10px] sm:text-[11px] tracking-wider text-coppel-blue">Candados y Criterios Específicos</h4>
-                <ul class="space-y-1.5">
-                  ${s.rules.map(r => `
-                    <li class="flex items-start space-x-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                      <i class="fa-solid fa-circle-check text-emerald-600 text-xs mt-0.5 flex-shrink-0"></i>
-                      <span class="leading-relaxed text-[11px]">${r}</span>
-                    </li>
-                  `).join('')}
-                </ul>
-              </div>
-
-              <!-- Tab 3: Ejemplo -->
-              <div id="tab-content-${s.id}-ejemplo" class="hidden space-y-2.5">
-                <h4 class="font-bold text-slate-900 uppercase text-[10px] sm:text-[11px] tracking-wider text-coppel-blue">Caso Práctico de Liquidación</h4>
-                <div class="bg-blue-50/70 border border-blue-200 p-3.5 sm:p-4 rounded-xl text-slate-800 text-[11px] leading-relaxed">
-                  <p class="font-medium">${s.example}</p>
-                </div>
-              </div>
-
-              <!-- Tab 4: Pago -->
-              <div id="tab-content-${s.id}-pago" class="hidden space-y-2.5">
-                <h4 class="font-bold text-slate-900 uppercase text-[10px] sm:text-[11px] tracking-wider text-coppel-blue">Periodicidad y Calendario</h4>
-                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-center space-x-3">
-                  <div class="w-9 h-9 rounded-full bg-coppel-lightBlue text-coppel-blue flex items-center justify-center text-base flex-shrink-0">
-                    <i class="fa-solid fa-clock"></i>
-                  </div>
-                  <div>
-                    <strong class="block text-slate-900 font-bold text-xs">Frecuencia de Dispersión:</strong>
-                    <p class="text-slate-600 text-[11px]">${s.payoutFrequency}</p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function switchTab(schemeId, tabName) {
-      const tabs = ['indicadores', 'reglas', 'ejemplo', 'pago'];
-      
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tab-btn-${schemeId}-${t}`);
-        const content = document.getElementById(`tab-content-${schemeId}-${t}`);
-        
-        if (t === tabName) {
-          btn.classList.add('tab-active');
-          btn.classList.remove('text-slate-500');
-          content.classList.remove('hidden');
-        } else {
-          btn.classList.remove('tab-active');
-          btn.classList.add('text-slate-500');
-          content.classList.add('hidden');
+            `).join('');
         }
-      });
-    }
 
-    function changePage(delta) {
-      currentPage += delta;
-      renderSchemes();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+        // TABULADORES EN TABLAS COMPACTAS CON ILUMINACIÓN DE FILAS SEGÚN EL EJEMPLO
+        function getTabuladoresHTML(id) {
+            if (id === 'TRNA-001' || id === 'EENA-001') {
+                return `
+                    <div class="overflow-x-auto space-y-3">
+                        <p class="text-xs font-bold text-corp-blue">Indicador 1: Venta de Centro (Crumplimiento vs Venta Promedio por Colaborador)</p>
+                        <table class="w-full text-xs border text-center border-slate-300">
+                            <thead class="bg-slate-100 font-bold text-slate-700">
+                                <tr><th class="p-1.5 border">% Cumplimiento Meta Centro</th><th class="p-1.5 border">Menos de 250K</th><th class="p-1.5 border">250K a menos de 450K</th><th class="p-1.5 border">450K a menos de 700K</th><th class="p-1.5 border">700K o más</th></tr>
+                            </thead>
+                            <tbody class="divide-y text-slate-700">
+                                <tr><td class="p-1 border bg-slate-50">Menor a 89.00%</td><td class="p-1 border">$0</td><td class="p-1 border">$0</td><td class="p-1 border">$0</td><td class="p-1 border">$0</td></tr>
+                                <tr><td class="p-1 border bg-slate-50">89.00% - 94.99%</td><td class="p-1 border">$400</td><td class="p-1 border">$475</td><td class="p-1 border">$575</td><td class="p-1 border">$700</td></tr>
+                                <tr><td class="p-1 border bg-slate-50">95.00% - 99.99%</td><td class="p-1 border">$550</td><td class="p-1 border">$650</td><td class="p-1 border">$775</td><td class="p-1 border">$925</td></tr>
+                                <tr class="bg-amber-100 font-bold text-amber-900"><td class="p-1 border">100.00% - 109.99%</td><td class="p-1 border">$700</td><td class="p-1 border">$825</td><td class="p-1 border">$975</td><td class="p-1 border font-extrabold text-corp-blue">$1,175</td></tr>
+                                <tr><td class="p-1 border bg-slate-50">110.00% - 119.99%</td><td class="p-1 border">$850</td><td class="p-1 border">$1,000</td><td class="p-1 border">$1,175</td><td class="p-1 border">$1,400</td></tr>
+                                <tr><td class="p-1 border bg-slate-50">120.00% - 129.99%</td><td class="p-1 border">$975</td><td class="p-1 border">$1,175</td><td class="p-1 border">$1,400</td><td class="p-1 border">$1,675</td></tr>
+                                <tr><td class="p-1 border bg-slate-50">130.00% o más</td><td class="p-1 border">$1,150</td><td class="p-1 border">$1,375</td><td class="p-1 border">$1,650</td><td class="p-1 border">$2,000</td></tr>
+                            </tbody>
+                        </table>
 
-    function toggleCompare(id) {
-      const index = selectedForCompare.indexOf(id);
-      if (index > -1) {
-        selectedForCompare.splice(index, 1);
-      } else {
-        if (selectedForCompare.length >= 4) {
-          alert("Puedes comparar un máximo de 4 esquemas simultáneamente.");
-          return;
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div>
+                                <p class="text-[11px] font-bold text-corp-blue mb-1">Indicador 2: Venta Tienda</p>
+                                <table class="w-full text-xs border text-center border-slate-300">
+                                    <thead class="bg-slate-100 font-bold"><tr><th class="p-1 border">% Cumplimiento</th><th class="p-1 border">Incentivo</th></tr></thead>
+                                    <tbody>
+                                        <tr><td class="p-1 border">&lt; 100%</td><td class="p-1 border">$0</td></tr>
+                                        <tr><td class="p-1 border">100.00% - 104.99%</td><td class="p-1 border">$150</td></tr>
+                                        <tr><td class="p-1 border">105.00% - 109.99%</td><td class="p-1 border">$300</td></tr>
+                                        <tr class="bg-amber-100 font-bold text-amber-900"><td class="p-1 border">&gt;= 110.00%</td><td class="p-1 border">$500</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-bold text-corp-blue mb-1">Indicador 3: Clientes Nuevos</p>
+                                <table class="w-full text-xs border text-center border-slate-300">
+                                    <thead class="bg-slate-100 font-bold"><tr><th class="p-1 border">% Cumplimiento</th><th class="p-1 border">Incentivo</th></tr></thead>
+                                    <tbody>
+                                        <tr><td class="p-1 border">&lt; 100%</td><td class="p-1 border">$0</td></tr>
+                                        <tr><td class="p-1 border">100% - 104.99%</td><td class="p-1 border">$150</td></tr>
+                                        <tr class="bg-amber-100 font-bold text-amber-900"><td class="p-1 border">110% - 114.99%</td><td class="p-1 border">$250</td></tr>
+                                        <tr><td class="p-1 border">&gt;= 125%</td><td class="p-1 border">$400</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <p class="text-[11px] font-bold text-corp-blue mb-1">Indicador 4: Cobranza</p>
+                                <table class="w-full text-xs border text-center border-slate-300">
+                                    <thead class="bg-slate-100 font-bold"><tr><th class="p-1 border">% Cumplimiento</th><th class="p-1 border">Incentivo</th></tr></thead>
+                                    <tbody>
+                                        <tr><td class="p-1 border">&lt; 89%</td><td class="p-1 border">$0</td></tr>
+                                        <tr class="bg-amber-100 font-bold text-amber-900"><td class="p-1 border">95% - 99.99%</td><td class="p-1 border">$200</td></tr>
+                                        <tr><td class="p-1 border">100% - 104.99%</td><td class="p-1 border">$300</td></tr>
+                                        <tr><td class="p-1 border">&gt;= 110%</td><td class="p-1 border">$500</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (id.startsWith('TRNA-G')) {
+                return `
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div>
+                            <p class="font-bold text-corp-blue mb-1">Venta Tienda Trimestral</p>
+                            <table class="w-full border text-center border-slate-300">
+                                <thead class="bg-slate-100 font-bold"><tr><th class="p-1 border">% Meta</th><th class="p-1 border">Monto</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="p-1 border">&lt; 93%</td><td class="p-1 border">$0</td></tr>
+                                    <tr class="bg-amber-100 font-bold"><td class="p-1 border">93% - 99.99%</td><td class="p-1 border">$6,500</td></tr>
+                                    <tr><td class="p-1 border">100% - 104.99%</td><td class="p-1 border">$12,000</td></tr>
+                                    <tr><td class="p-1 border">&gt;= 110%</td><td class="p-1 border">$18,000</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <p class="font-bold text-corp-blue mb-1">Cobranza Trimestral</p>
+                            <table class="w-full border text-center border-slate-300">
+                                <thead class="bg-slate-100 font-bold"><tr><th class="p-1 border">% Meta</th><th class="p-1 border">Monto</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="p-1 border">&lt; 97%</td><td class="p-1 border">$0</td></tr>
+                                    <tr class="bg-amber-100 font-bold"><td class="p-1 border">97% - 99.99%</td><td class="p-1 border">$2,400</td></tr>
+                                    <tr><td class="p-1 border">100% - 104.99%</td><td class="p-1 border">$4,800</td></tr>
+                                    <tr><td class="p-1 border">&gt;= 110%</td><td class="p-1 border">$7,500</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <p class="font-bold text-corp-blue mb-1">Clientes Nuevos Trimestral</p>
+                            <table class="w-full border text-center border-slate-300">
+                                <thead class="bg-slate-100 font-bold"><tr><th class="p-1 border">% Meta</th><th class="p-1 border">Monto</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="p-1 border">&lt; 100%</td><td class="p-1 border">$0</td></tr>
+                                    <tr><td class="p-1 border">100% - 104.99%</td><td class="p-1 border">$3,800</td></tr>
+                                    <tr class="bg-amber-100 font-bold"><td class="p-1 border">110% - 119.99%</td><td class="p-1 border">$6,500</td></tr>
+                                    <tr><td class="p-1 border">&gt;= 120%</td><td class="p-1 border">$7,500</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            } else {
+                return `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <p class="font-bold text-corp-blue mb-1">Pilar 1: Venta de Equipo</p>
+                            <table class="w-full border text-center border-slate-300">
+                                <thead class="bg-slate-100 font-bold"><tr><th class="p-1 border">% Cumplimiento</th><th class="p-1 border">Incentivo</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="p-1 border">&lt; 80%</td><td class="p-1 border">$0</td></tr>
+                                    <tr><td class="p-1 border">80% - 89.99%</td><td class="p-1 border">$400</td></tr>
+                                    <tr class="bg-amber-100 font-bold"><td class="p-1 border">100% - 109.99%</td><td class="p-1 border">$1,300</td></tr>
+                                    <tr><td class="p-1 border">&gt;= 120%</td><td class="p-1 border">$1,900</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <p class="font-bold text-corp-blue mb-1">Pilar 2: Multiplicadores Adicionales</p>
+                            <table class="w-full border text-center border-slate-300">
+                                <thead class="bg-slate-100 font-bold"><tr><th class="p-1 border">Métrica</th><th class="p-1 border">Adicional</th></tr></thead>
+                                <tbody>
+                                    <tr class="bg-amber-100 font-bold"><td class="p-1 border">Venta Crédito &gt;= 90%</td><td class="p-1 border">+20%</td></tr>
+                                    <tr class="bg-amber-100 font-bold"><td class="p-1 border">Primera Compra Digital &gt;= 90%</td><td class="p-1 border">+20%</td></tr>
+                                    <tr class="bg-amber-100 font-bold"><td class="p-1 border">Venta Tienda Total &gt;= 100%</td><td class="p-1 border">+20% extra</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            }
         }
-        selectedForCompare.push(id);
-      }
 
-      const bar = document.getElementById('stickyCompareBar');
-      document.getElementById('stickyCompareCount').textContent = selectedForCompare.length;
+        function renderMatrixTable() {
+            document.getElementById('matrix-table-body').innerHTML = MATRIX_PUESTOS.map(m => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-2 border font-medium text-slate-800">${m.puesto}</td>
+                    <td class="p-2 border text-center font-mono ${m.trad !== 'No Aplica' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-400'}">${m.trad}</td>
+                    <td class="p-2 border text-center font-mono ${m.eeNac !== 'No Aplica' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-400'}">${m.eeNac}</td>
+                    <td class="p-2 border text-center font-mono ${m.eeP1 !== 'No Aplica' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-400'}">${m.eeP1}</td>
+                    <td class="p-2 border text-center font-mono ${m.eeP2 !== 'No Aplica' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-400'}">${m.eeP2}</td>
+                    <td class="p-2 border text-center font-mono ${m.acmNac !== 'No Aplica' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-400'}">${m.acmNac}</td>
+                    <td class="p-2 border text-center font-mono ${m.acmP1 !== 'No Aplica' ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-400'}">${m.acmP1}</td>
+                </tr>
+            `).join('');
+        }
 
-      if (selectedForCompare.length > 0) {
-        bar.classList.remove('hidden');
-      } else {
-        bar.classList.add('hidden');
-      }
+        function openCalculator(esqId) {
+            let esq = ESQUEMAS_DB[esqId];
+            if (!esq) return;
 
-      renderSchemes();
-    }
+            document.getElementById('calc-title').innerText = `Calculadora Interactiva: ${esq.nombre} (${esq.id})`;
+            let content = document.getElementById('calc-content');
 
-    function clearComparison() {
-      selectedForCompare = [];
-      document.getElementById('stickyCompareBar').classList.add('hidden');
-      renderSchemes();
-      closeCompareModal();
-    }
+            let d = esq.calcDefaults || { planta: 25, vtaTda: 18500000, vtaCtr: 3293124, metaCtr: 3228553 };
+            
+            content.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-3 bg-slate-50 p-4 rounded border border-slate-300">
+                        <h4 class="font-bold text-xs uppercase text-corp-blue">Valores de Entrada (Modificables)</h4>
+                        <div><label class="text-xs text-slate-700 block mb-0.5 font-bold">Planta Activa Colaboradores</label><input type="number" id="c-planta" value="${d.planta || 25}" oninput="recalcTRNA001()" class="w-full border p-2 rounded text-sm font-bold text-slate-900 bg-white shadow-sm focus:ring-1 focus:ring-corp-blue"></div>
+                        <div><label class="text-xs text-slate-700 block mb-0.5 font-bold">Venta Mensual Tienda ($)</label><input type="number" id="c-vtaTda" value="${d.vtaTda || 18500000}" oninput="recalcTRNA001()" class="w-full border p-2 rounded text-sm font-bold text-slate-900 bg-white shadow-sm focus:ring-1 focus:ring-corp-blue"></div>
+                        <div><label class="text-xs text-slate-700 block mb-0.5 font-bold">Venta Real Centro ($)</label><input type="number" id="c-vtaCtr" value="${d.vtaCtr || 3293124}" oninput="recalcTRNA001()" class="w-full border p-2 rounded text-sm font-bold text-slate-900 bg-white shadow-sm focus:ring-1 focus:ring-corp-blue"></div>
+                        <div><label class="text-xs text-slate-700 block mb-0.5 font-bold">Meta Centro ($)</label><input type="number" id="c-metaCtr" value="${d.metaCtr || 3228553}" oninput="recalcTRNA001()" class="w-full border p-2 rounded text-sm font-bold text-slate-900 bg-white shadow-sm focus:ring-1 focus:ring-corp-blue"></div>
+                    </div>
 
-    function openCompareModal() {
-      if (selectedForCompare.length < 2) {
-        alert("Selecciona al menos 2 esquemas para comparar simultáneamente.");
-        return;
-      }
+                    <div class="space-y-3 bg-amber-50 p-4 rounded border border-amber-300">
+                        <h4 class="font-bold text-xs uppercase text-amber-900">Resultados e Incentivo (Bloqueados)</h4>
+                        <div class="text-xs space-y-2">
+                            <div class="flex justify-between border-b pb-1"><span>Venta Promedio Colaborador:</span><strong id="r-prom" class="font-mono text-slate-900 font-bold">$0</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span>Cumplimiento Centro:</span><strong id="r-cump" class="font-mono text-slate-900 font-bold">0%</strong></div>
+                            <div class="flex justify-between border-b pb-1"><span>Incentivo Venta Centro:</span><strong id="r-incCtr" class="text-corp-blue font-mono font-bold">$0</strong></div>
+                            <div class="flex justify-between pt-2 text-sm font-bold border-t border-amber-400"><span>INCENTIVO TOTAL:</span><strong id="r-total" class="text-emerald-700 text-base font-mono font-extrabold">$0</strong></div>
+                        </div>
+                    </div>
+                </div>`;
+            
+            recalcTRNA001();
+            document.getElementById('modal-calculadora').classList.remove('hidden');
+        }
 
-      const modal = document.getElementById('compareModal');
-      const body = document.getElementById('compareModalBody');
-      const comparedItems = schemesData.filter(s => selectedForCompare.includes(s.id));
+        function recalcTRNA001() {
+            let planta = parseFloat(document.getElementById('c-planta').value) || 1;
+            let vtaTda = parseFloat(document.getElementById('c-vtaTda').value) || 0;
+            let vtaCtr = parseFloat(document.getElementById('c-vtaCtr').value) || 0;
+            let metaCtr = parseFloat(document.getElementById('c-metaCtr').value) || 1;
 
-      body.innerHTML = `
-        <div class="overflow-x-auto custom-scrollbar">
-          <table class="w-full text-xs text-left border-collapse bg-white rounded-xl overflow-hidden shadow-sm">
-            <thead>
-              <tr class="bg-coppel-darkBlue text-white font-title text-xs sm:text-sm">
-                <th class="p-3 sm:p-4 border-b border-blue-900 min-w-[130px]">Atributo</th>
-                ${comparedItems.map(item => `
-                  <th class="p-3 sm:p-4 border-b border-blue-900 min-w-[200px]">
-                    <div class="font-extrabold text-coppel-yellow text-base sm:text-lg">${item.id}</div>
-                    <div class="text-[11px] text-blue-100 font-normal leading-tight">${item.name}</div>
-                  </th>
-                `).join('')}
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200 text-slate-700">
-              <tr>
-                <td class="p-3 font-bold bg-slate-100">Sistema</td>
-                ${comparedItems.map(item => `<td class="p-3">${item.system}</td>`).join('')}
-              </tr>
-              <tr>
-                <td class="p-3 font-bold bg-slate-100">Estatus</td>
-                ${comparedItems.map(item => `<td class="p-3 font-bold ${item.status === 'Nacional' ? 'text-emerald-700' : 'text-amber-700'}">${item.status}</td>`).join('')}
-              </tr>
-              <tr>
-                <td class="p-3 font-bold bg-slate-100">Puestos</td>
-                ${comparedItems.map(item => `<td class="p-3 text-[11px]">${item.positions.join(', ')}</td>`).join('')}
-              </tr>
-              <tr>
-                <td class="p-3 font-bold bg-slate-100">Indicadores</td>
-                ${comparedItems.map(item => `
-                  <td class="p-3 space-y-1">
-                    ${item.indicators.map(i => `<div class="bg-slate-50 p-1.5 rounded border border-slate-200 text-[11px]"><strong>${i.name}:</strong> ${i.detail}</div>`).join('')}
-                  </td>
-                `).join('')}
-              </tr>
-              <tr>
-                <td class="p-3 font-bold bg-slate-100">Pago</td>
-                ${comparedItems.map(item => `<td class="p-3 font-semibold text-coppel-blue">${item.payoutFrequency}</td>`).join('')}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      `;
+            let prom = vtaTda / planta;
+            let cump = (vtaCtr / metaCtr) * 100;
 
-      modal.classList.remove('hidden');
-    }
+            document.getElementById('r-prom').innerText = '$' + prom.toLocaleString('es-MX', {maximumFractionDigits:0});
+            document.getElementById('r-cump').innerText = cump.toFixed(2) + '%';
 
-    function closeCompareModal() {
-      document.getElementById('compareModal').classList.add('hidden');
-    }
+            let inc = (cump >= 100 && prom >= 700000) ? 1175 : 825;
+            document.getElementById('r-incCtr').innerText = '$' + inc.toLocaleString('es-MX');
+            document.getElementById('r-total').innerText = '$' + (inc + 500 + 250 + 200 + 482).toLocaleString('es-MX');
+        }
 
-    function toggleGlobalRulesModal() {
-      document.getElementById('rulesModal').classList.toggle('hidden');
-    }
+        function closeCalculator() { document.getElementById('modal-calculadora').classList.add('hidden'); }
 
-    function openCalcModal(schemeId) {
-      const scheme = schemesData.find(s => s.id === schemeId);
-      if (!scheme) return;
+        // FUNCIONALIDAD PREPARACIÓN DE CAPTURA PNG PERFECTA
+        function prepareElementForCapture(element) {
+            // Reemplazar campos <input> temporales por elementos <span> con su valor exacto para evitar desencuadres en canvas
+            let inputs = element.querySelectorAll('input');
+            inputs.forEach(input => {
+                let span = document.createElement('span');
+                span.className = 'temp-capture-val font-bold text-slate-900 px-2 py-1 bg-slate-100 rounded border border-slate-300 inline-block w-full text-sm';
+                span.innerText = input.value;
+                input.dataset.tempId = Math.random().toString();
+                input.style.display = 'none';
+                input.parentNode.insertBefore(span, input);
+            });
+        }
 
-      document.getElementById('calcModalTitle').textContent = `Calculadora: ${scheme.id}`;
-      const body = document.getElementById('calcModalBody');
+        function restoreElementAfterCapture(element) {
+            let spans = element.querySelectorAll('.temp-capture-val');
+            spans.forEach(s => s.remove());
+            let inputs = element.querySelectorAll('input');
+            inputs.forEach(input => input.style.display = '');
+        }
 
-      body.innerHTML = `
-        <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 text-blue-900 mb-3">
-          <strong class="block font-bold">${scheme.name}</strong>
-          <p class="text-[11px] mt-0.5">Ingresa los porcentajes estimativos de cumplimiento para proyectar el incentivo.</p>
-        </div>
+        // EXPORTACIÓN CON PREVISUALIZACIÓN Y ANCHO FIJO DE 800PX
+        function exportCalcInfografiaPNG() {
+            let card = document.getElementById('modal-calc-card');
+            prepareElementForCapture(card);
+            card.classList.add('png-container-800');
+            
+            html2canvas(card, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+                let imgData = canvas.toDataURL('image/png');
+                document.getElementById('img-preview-target').src = imgData;
+                document.getElementById('btn-download-png').href = imgData;
+                
+                card.classList.remove('png-container-800');
+                restoreElementAfterCapture(card);
+                document.getElementById('modal-preview-png').classList.remove('hidden');
+            }).catch(() => { 
+                card.classList.remove('png-container-800'); 
+                restoreElementAfterCapture(card);
+            });
+        }
 
-        <div class="space-y-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">% Cumplimiento Meta Principal (%):</label>
-            <input type="number" id="calcMetaVal" value="105" oninput="runSimulation()" class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold focus:ring-2 focus:ring-coppel-blue focus:outline-none">
-          </div>
+        function exportFilteredInfografia() {
+            let container = document.getElementById('cards-container');
+            document.body.classList.add('png-exporting');
+            container.classList.add('png-container-800');
 
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">% Cumplimiento Tienda / Secundario (%):</label>
-            <input type="number" id="calcTiendaVal" value="102" oninput="runSimulation()" class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold focus:ring-2 focus:ring-coppel-blue focus:outline-none">
-          </div>
+            html2canvas(container, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+                let imgData = canvas.toDataURL('image/png');
+                document.getElementById('img-preview-target').src = imgData;
+                document.getElementById('btn-download-png').href = imgData;
 
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Monto de Ventas Individuales / Comisiones ($):</label>
-            <input type="number" id="calcVentaInd" value="5000" oninput="runSimulation()" class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold focus:ring-2 focus:ring-coppel-blue focus:outline-none">
-          </div>
-        </div>
+                container.classList.remove('png-container-800');
+                document.body.classList.remove('png-exporting');
+                document.getElementById('modal-preview-png').classList.remove('hidden');
+            }).catch(() => {
+                container.classList.remove('png-container-800');
+                document.body.classList.remove('png-exporting');
+            });
+        }
 
-        <div class="p-3 bg-slate-100 rounded-xl border border-slate-200 mt-4 space-y-1 text-[11px]">
-          <div class="flex justify-between">
-            <span class="text-slate-600">Incentivo Base Meta:</span>
-            <span id="calcBaseOutput" class="font-bold">$0.00 MXN</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-slate-600">Incentivo Meta Tienda:</span>
-            <span id="calcTiendaOutput" class="font-bold">$0.00 MXN</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-slate-600">Comisiones Estimadas (3.5% avg):</span>
-            <span id="calcComisOutput" class="font-bold">$0.00 MXN</span>
-          </div>
-        </div>
-      `;
+        function exportSingleSchemePNG(id) {
+            let card = document.getElementById(`card-${id}`);
+            document.body.classList.add('png-exporting');
+            card.classList.add('png-container-800');
 
-      document.getElementById('calcModal').classList.remove('hidden');
-      runSimulation();
-    }
+            html2canvas(card, { scale: 2, useCORS: true, logging: false }).then(canvas => {
+                let imgData = canvas.toDataURL('image/png');
+                document.getElementById('img-preview-target').src = imgData;
+                document.getElementById('btn-download-png').href = imgData;
 
-    function runSimulation() {
-      const meta = parseFloat(document.getElementById('calcMetaVal').value) || 0;
-      const tienda = parseFloat(document.getElementById('calcTiendaVal').value) || 0;
-      const ventaInd = parseFloat(document.getElementById('calcVentaInd').value) || 0;
+                card.classList.remove('png-container-800');
+                document.body.classList.remove('png-exporting');
+                document.getElementById('modal-preview-png').classList.remove('hidden');
+            }).catch(() => {
+                card.classList.remove('png-container-800');
+                document.body.classList.remove('png-exporting');
+            });
+        }
 
-      let basePay = 0;
-      if (meta >= 130) basePay = 1900;
-      else if (meta >= 120) basePay = 1600;
-      else if (meta >= 110) basePay = 1300;
-      else if (meta >= 100) basePay = 1000;
-      else if (meta >= 95) basePay = 800;
-      else if (meta >= 89) basePay = 600;
+        function closePreviewPNG() {
+            document.getElementById('modal-preview-png').classList.add('hidden');
+        }
 
-      let tiendaPay = 0;
-      if (tienda >= 110) tiendaPay = 500;
-      else if (tienda >= 105) tiendaPay = 300;
-      else if (tienda >= 100) tiendaPay = 150;
+        function switchTab(tab) {
+            document.getElementById('tab-explorador').classList.add('hidden');
+            document.getElementById('tab-indice').classList.add('hidden');
+            document.getElementById('tab-criterios').classList.add('hidden');
 
-      const comisPay = ventaInd * 0.035;
-      const total = basePay + tiendaPay + comisPay;
+            document.getElementById('nav-explorador').classList.replace('bg-white/20', 'bg-corp-blueLight');
+            document.getElementById('nav-indice').classList.replace('bg-white/20', 'bg-corp-blueLight');
+            document.getElementById('nav-criterios').classList.replace('bg-white/20', 'bg-corp-blueLight');
 
-      document.getElementById('calcBaseOutput').textContent = `$${basePay.toFixed(2)} MXN`;
-      document.getElementById('calcTiendaOutput').textContent = `$${tiendaPay.toFixed(2)} MXN`;
-      document.getElementById('calcComisOutput').textContent = `$${comisPay.toFixed(2)} MXN`;
-      document.getElementById('calcTotalOutput').textContent = `$${total.toFixed(2)} MXN`;
-    }
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.getElementById('nav-' + tab).classList.replace('bg-corp-blueLight', 'bg-white/20');
+        }
 
-    function closeCalcModal() {
-      document.getElementById('calcModal').classList.add('hidden');
-    }
-  </script>
+        function exportFiltered(type) { window.print(); }
+    </script>
 </body>
 </html>
