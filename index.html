@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-50">
+<html lang="es" class="h-full bg-slate-100">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Plataforma de Gobierno y Explorador de Esquemas Coppel</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <!-- Google Fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
   
   <script>
@@ -19,10 +19,10 @@
             coppel: {
               yellow: '#FFD100',
               blue: '#0033A0',
-              darkBlue: '#002270',
+              darkBlue: '#001E6C',
               lightBlue: '#E6EEFF',
               accent: '#1E40AF',
-              grayBackground: '#F8FAFC'
+              grayBG: '#F8FAFC'
             }
           },
           fontFamily: {
@@ -37,13 +37,14 @@
   <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
     h1, h2, h3, h4, .font-title {
       font-family: 'Outfit', sans-serif;
     }
     .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
       background: #f1f5f9;
@@ -56,46 +57,51 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
-    .card-transition {
-      transition: all 0.25s ease-in-out;
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
     }
-    .card-transition:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px -8px rgba(0, 51, 160, 0.12);
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
     .tab-active {
       border-bottom: 3px solid #0033A0;
       color: #0033A0;
       font-weight: 700;
+      background-color: #f8fafc;
+    }
+    /* Mobile drawer slide animation */
+    .drawer-slide {
+      transition: transform 0.3s ease-in-out;
     }
   </style>
 </head>
-<body class="h-full flex flex-col bg-slate-100 text-slate-800 antialiased selection:bg-coppel-yellow selection:text-slate-900">
+<body class="h-full flex flex-col bg-slate-100 text-slate-800 antialiased pb-20 md:pb-6">
 
-  <header class="bg-coppel-blue text-white sticky top-0 z-40 shadow-md">
+  <header class="bg-coppel-darkBlue text-white sticky top-0 z-40 shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-lg bg-coppel-yellow flex items-center justify-center font-bold text-coppel-blue text-xl shadow-inner">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-coppel-yellow flex items-center justify-center font-bold text-coppel-darkBlue text-lg sm:text-xl shadow-inner">
           <i class="fa-solid fa-layer-group"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <span class="font-title font-extrabold text-lg tracking-wide">GOBIERNO DE INCENTIVOS</span>
-            <span class="bg-coppel-yellow text-coppel-darkBlue text-xs font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">Coppel Retail</span>
+            <span class="font-title font-extrabold text-base sm:text-lg tracking-wide">INCENTIVOS COPPEL</span>
+            <span class="bg-coppel-yellow text-coppel-darkBlue text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider hidden sm:inline-block">Retail</span>
           </div>
-          <p class="text-xs text-blue-200">Explorador Interactivo de Esquemas y Reglas de Negocio</p>
+          <p class="text-[11px] text-blue-200 truncate max-w-[200px] sm:max-w-none">Explorador Interactivo &amp; Calculadora BI</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-3">
-        <!-- Compare Modal Counter Button -->
-        <button id="compareBtn" onclick="openCompareModal()" class="relative bg-blue-900/60 hover:bg-blue-900 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-blue-400/30 flex items-center space-x-2 transition">
-          <i class="fa-solid fa-code-compare text-coppel-yellow"></i>
-          <span>Comparar Esquemas</span>
-          <span id="compareCountBadge" class="bg-coppel-yellow text-coppel-darkBlue font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center ml-1">0</span>
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Toggle Mobile Filters Button -->
+        <button onclick="toggleMobileFilters()" class="md:hidden bg-blue-900/80 hover:bg-blue-800 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-blue-400/30 flex items-center space-x-1.5 transition">
+          <i class="fa-solid fa-sliders text-coppel-yellow"></i>
+          <span>Filtros</span>
         </button>
-        <!-- Rules Modal Button -->
-        <button onclick="toggleGlobalRulesModal()" class="bg-blue-800 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-blue-400/30 flex items-center space-x-2 transition">
+
+        <!-- Rules Button -->
+        <button onclick="toggleGlobalRulesModal()" class="bg-blue-900/80 hover:bg-blue-800 text-white text-xs font-semibold px-3 py-2 rounded-lg border border-blue-400/30 flex items-center space-x-1.5 transition">
           <i class="fa-solid fa-scale-balanced text-coppel-yellow"></i>
           <span class="hidden sm:inline">Reglas Universales</span>
         </button>
@@ -103,33 +109,38 @@
     </div>
   </header>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full flex flex-col md:flex-row gap-6">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow w-full flex flex-col md:flex-row gap-6">
 
-    <!-- Sidebar Filters -->
-    <aside class="w-full md:w-72 flex-shrink-0 bg-white rounded-xl shadow-sm border border-slate-200 p-5 h-fit sticky top-20">
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-        <h2 class="font-title font-bold text-slate-800 text-base flex items-center gap-2">
-          <i class="fa-solid fa-filter text-coppel-blue"></i> Filtros de Busqueda
+    <!-- Sidebar Filters (Collapsible on Mobile, Sticky on Desktop) -->
+    <aside id="sidebarFilter" class="hidden md:block w-full md:w-72 flex-shrink-0 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 h-fit md:sticky md:top-20 z-30">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+        <h2 class="font-title font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+          <i class="fa-solid fa-filter text-coppel-blue"></i> Filtros de Búsqueda
         </h2>
-        <button onclick="resetFilters()" class="text-xs text-coppel-blue hover:text-blue-800 font-semibold underline">
-          Limpiar
-        </button>
+        <div class="flex items-center space-x-2">
+          <button onclick="resetFilters()" class="text-xs text-coppel-blue hover:text-blue-900 font-bold underline">
+            Limpiar
+          </button>
+          <button onclick="toggleMobileFilters()" class="md:hidden text-slate-400 hover:text-slate-600 text-base px-1">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-3 sm:space-y-4">
         <!-- Search Input -->
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Buscar por Palabra Clave</label>
+          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Palabra Clave / Puesto / ID</label>
           <div class="relative">
-            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Ej: TRNA-001, Cajero, Optica..." class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-coppel-blue focus:outline-none transition">
+            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Ej: TRNA-001, Cajero, Motos..." class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none transition">
             <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
           </div>
         </div>
 
         <!-- Work System Filter -->
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Sistema de Trabajo</label>
-          <select id="systemFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
+          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Sistema de Trabajo</label>
+          <select id="systemFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
             <option value="ALL">Todos los Sistemas</option>
             <option value="Tradicional">Tradicional</option>
             <option value="Equipos Enfocados">Equipos Enfocados (EE)</option>
@@ -139,8 +150,8 @@
 
         <!-- Scheme Status Filter -->
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Estatus del Esquema</label>
-          <select id="statusFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
+          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Estatus del Esquema</label>
+          <select id="statusFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
             <option value="ALL">Todos los Estatus</option>
             <option value="Nacional">Nacional (Permanente)</option>
             <option value="Prueba">Prueba (Temporal)</option>
@@ -149,8 +160,8 @@
 
         <!-- Job Position Filter -->
         <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Puesto o Funcion</label>
-          <select id="positionFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
+          <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Puesto o Función</label>
+          <select id="positionFilter" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
             <option value="ALL">Todos los Puestos</option>
             <option value="Asesor ventas">Asesores de Ventas (#1, #17, #89, etc.)</option>
             <option value="Cajero Multifuncional">Cajero Multifuncional (#21)</option>
@@ -166,217 +177,231 @@
           </select>
         </div>
 
-        <hr class="border-slate-100">
+        <hr class="border-slate-100 my-2">
 
         <!-- Display Count Controls -->
-        <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Mostrar por Pagina</label>
-          <select id="limitSelect" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
-            <option value="4">4 Esquemas</option>
-            <option value="8" selected>8 Esquemas</option>
-            <option value="12">12 Esquemas</option>
-            <option value="ALL">Mostrar Todos</option>
-          </select>
-        </div>
-
-        <!-- Sorting Selector -->
-        <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Ordenar Informacion</label>
-          <select id="sortSelect" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
-            <option value="id-asc">ID Esquema (A - Z)</option>
-            <option value="id-desc">ID Esquema (Z - A)</option>
-            <option value="status">Estatus (Nacional primero)</option>
-            <option value="system">Sistema de Trabajo</option>
-          </select>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">Ver por Pág.</label>
+            <select id="limitSelect" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
+              <option value="4">4</option>
+              <option value="8" selected>8</option>
+              <option value="12">12</option>
+              <option value="ALL">Todos</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">Orden</label>
+            <select id="sortSelect" onchange="applyFilters()" class="w-full p-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-coppel-blue focus:outline-none font-medium">
+              <option value="id-asc">ID (A-Z)</option>
+              <option value="id-desc">ID (Z-A)</option>
+              <option value="status">Estatus</option>
+              <option value="system">Sistema</option>
+            </select>
+          </div>
         </div>
       </div>
     </aside>
 
-    <main class="flex-grow flex flex-col">
+    <main class="flex-grow flex flex-col min-w-0">
 
       <!-- Status Header bar -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center space-x-2">
-          <span class="text-sm font-bold text-slate-700">Resultados Encontrados:</span>
-          <span id="resultsCount" class="bg-coppel-lightBlue text-coppel-blue font-extrabold text-xs px-2.5 py-1 rounded-full border border-blue-200">0</span>
+          <span class="text-xs sm:text-sm font-bold text-slate-700">Esquemas Encontrados:</span>
+          <span id="resultsCount" class="bg-coppel-lightBlue text-coppel-blue font-black text-xs px-2.5 py-0.5 rounded-full border border-blue-200">0</span>
         </div>
-        <div id="activeFilterBadges" class="flex flex-wrap gap-1.5 text-xs">
-          <!-- Filter tags dynamically injected -->
+        <div id="activeFilterBadges" class="flex flex-wrap gap-1 text-[11px]">
+          <!-- Filter badges injected dynamically -->
         </div>
       </div>
 
-      <!-- Schemes Grid Container -->
-      <div id="schemesGrid" class="grid grid-cols-1 gap-6">
+      <!-- Schemes Cards Grid -->
+      <div id="schemesGrid" class="space-y-4 sm:space-y-6">
         <!-- Cards injected dynamically via JavaScript -->
       </div>
 
       <!-- Empty State -->
-      <div id="noResultsState" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center my-6">
-        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400 text-2xl">
+      <div id="noResultsState" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-8 sm:p-12 text-center my-6">
+        <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400 text-xl">
           <i class="fa-solid fa-folder-open"></i>
         </div>
-        <h3 class="font-title text-lg font-bold text-slate-800 mb-1">No se encontraron esquemas</h3>
-        <p class="text-xs text-slate-500 max-w-md mx-auto mb-4">No hay coincidencias con los criterios o filtros seleccionados. Intenta modificar los parámetros de búsqueda.</p>
-        <button onclick="resetFilters()" class="bg-coppel-blue hover:bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
+        <h3 class="font-title text-base sm:text-lg font-bold text-slate-800 mb-1">No se encontraron esquemas</h3>
+        <p class="text-xs text-slate-500 max-w-md mx-auto mb-4">No hay coincidencias con los criterios seleccionados.</p>
+        <button onclick="resetFilters()" class="bg-coppel-blue hover:bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
           Restablecer Filtros
         </button>
       </div>
 
       <!-- Pagination Footer -->
-      <div id="paginationContainer" class="mt-8 flex items-center justify-between bg-white px-4 py-3 rounded-xl border border-slate-200 shadow-sm">
-        <button id="prevPageBtn" onclick="changePage(-1)" class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">
-          <i class="fa-solid fa-chevron-left mr-1"></i> Anterior
+      <div id="paginationContainer" class="mt-6 flex items-center justify-between bg-white px-4 py-3 rounded-2xl border border-slate-200 shadow-sm text-xs">
+        <button id="prevPageBtn" onclick="changePage(-1)" class="px-3 py-1.5 border border-slate-200 rounded-xl font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+          <i class="fa-solid fa-chevron-left text-[10px]"></i> <span class="hidden sm:inline">Anterior</span>
         </button>
-        <span id="pageIndicator" class="text-xs text-slate-600 font-medium">Página 1 de 1</span>
-        <button id="nextPageBtn" onclick="changePage(1)" class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">
-          Siguiente <i class="fa-solid fa-chevron-right ml-1"></i>
+        <span id="pageIndicator" class="text-slate-600 font-bold">Página 1 de 1</span>
+        <button id="nextPageBtn" onclick="changePage(1)" class="px-3 py-1.5 border border-slate-200 rounded-xl font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1">
+          <span class="hidden sm:inline">Siguiente</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
         </button>
       </div>
 
     </main>
   </div>
 
-  <div id="rulesModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
-      <div class="bg-coppel-blue px-6 py-4 text-white flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <i class="fa-solid fa-scale-balanced text-coppel-yellow text-xl"></i>
-          <div>
-            <h3 class="font-title font-bold text-lg">Reglas Universales y Criterios Generales</h3>
-            <p class="text-xs text-blue-200">Normativa aplicable a todos los esquemas Coppel Retail</p>
-          </div>
-        </div>
-        <button onclick="toggleGlobalRulesModal()" class="text-white/80 hover:text-white text-lg">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+  <div id="stickyCompareBar" class="fixed bottom-0 inset-x-0 bg-coppel-darkBlue text-white border-t border-blue-800 p-3 z-40 hidden shadow-2xl">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-code-compare text-coppel-yellow text-base"></i>
+        <span class="text-xs font-bold">Comparando (<span id="stickyCompareCount">0</span>) esquemas</span>
       </div>
-
-      <div class="p-6 overflow-y-auto custom-scrollbar space-y-6 text-xs text-slate-700">
-        <!-- Business Rules -->
-        <div>
-          <h4 class="font-title font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-shield-halved text-coppel-blue"></i> Reglas de Elegibilidad y Pago
-          </h4>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <strong class="block text-slate-800 font-bold mb-1">Antigüedad Mínima:</strong>
-              Laborar el mes natural completo. Ingresos cobran en su 2do mes completo. Gerentes Suplentes requieren mínimo 6 meses.
-            </div>
-            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <strong class="block text-slate-800 font-bold mb-1">Estatus PROGC:</strong>
-              Estar activo en nómina y asignado al equipo en sistema PROGC durante el mes evaluado.
-            </div>
-            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <strong class="block text-slate-800 font-bold mb-1">Monto Mínimo de Dispersión:</strong>
-              Se requiere generar un incentivo mínimo acumulado de <strong>$50.00 MXN</strong> para recibir el pago.
-            </div>
-            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <strong class="block text-slate-800 font-bold mb-1">Traspaso de Empresa:</strong>
-              Transferencias a BanCoppel, Afore o otra razón social anulan el pago del incentivo del mes previo.
-            </div>
-            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <strong class="block text-slate-800 font-bold mb-1">Regla de Redondeo:</strong>
-              Sin décimas en porcentajes de desempeño. Se aplica truncamiento estricto (ej. 88.99% = 88%).
-            </div>
-            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
-              <strong class="block text-slate-800 font-bold mb-1">Prevalencia Normativa:</strong>
-              En caso de discrepancia entre texto y tabla, la tabla de valores siempre prevalece.
-            </div>
-          </div>
-        </div>
-
-        <!-- Additional Benefits -->
-        <div>
-          <h4 class="font-title font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-gift text-coppel-blue"></i> Prestaciones Adicionales
-          </h4>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-            <div class="bg-blue-50 p-2 rounded text-coppel-darkBlue font-semibold">• Aguinaldo y PTU</div>
-            <div class="bg-blue-50 p-2 rounded text-coppel-darkBlue font-semibold">• Fondo / Caja Ahorro</div>
-            <div class="bg-blue-50 p-2 rounded text-coppel-darkBlue font-semibold">• Descuento en Compras</div>
-            <div class="bg-blue-50 p-2 rounded text-coppel-darkBlue font-semibold">• Becas y Cursos</div>
-          </div>
-        </div>
-
-        <!-- Service Desk -->
-        <div class="bg-coppel-lightBlue p-4 rounded-xl border border-blue-200 flex items-center justify-between">
-          <div>
-            <strong class="block text-coppel-darkBlue font-bold text-sm">¿Dudas o Aclaraciones de Pago?</strong>
-            <p class="text-xs text-blue-900 mt-0.5">Gestión vía Service Desk: servicedesk.coppel.com -> Gestión Administrativa -> Aclaración de Incentivos</p>
-          </div>
-          <span class="text-xs font-bold bg-coppel-blue text-white px-3 py-1.5 rounded-lg shadow-sm">Atención L-V 9am-6pm</span>
-        </div>
-      </div>
-
-      <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
-        <button onclick="toggleGlobalRulesModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
-          Entendido / Cerrar
+      <div class="flex items-center space-x-2">
+        <button onclick="clearComparison()" class="text-[11px] text-blue-200 hover:text-white underline px-2">Limpiar</button>
+        <button onclick="openCompareModal()" class="bg-coppel-yellow text-coppel-darkBlue font-black text-xs px-3 py-1.5 rounded-lg shadow-sm">
+          Ver Comparador
         </button>
       </div>
     </div>
   </div>
 
-  <div id="compareModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col overflow-hidden border border-slate-200">
-      <div class="bg-coppel-darkBlue px-6 py-4 text-white flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <i class="fa-solid fa-code-compare text-coppel-yellow text-xl"></i>
+  <div id="rulesModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="bg-coppel-darkBlue px-5 py-3.5 text-white flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <i class="fa-solid fa-scale-balanced text-coppel-yellow text-lg"></i>
           <div>
-            <h3 class="font-title font-bold text-lg">Comparador Simultáneo de Esquemas</h3>
-            <p class="text-xs text-blue-200">Matriz comparativa de reglas, indicadores y comisiones</p>
+            <h3 class="font-title font-bold text-sm sm:text-base">Reglas Universales de Elegibilidad</h3>
+            <p class="text-[10px] sm:text-xs text-blue-200">Normativa oficial para la dispersión de incentivos</p>
           </div>
         </div>
-        <button onclick="closeCompareModal()" class="text-white/80 hover:text-white text-lg">
+        <button onclick="toggleGlobalRulesModal()" class="text-white/80 hover:text-white text-lg px-2">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <div id="compareModalBody" class="p-6 overflow-x-auto overflow-y-auto custom-scrollbar flex-grow bg-slate-50">
-        <!-- Dynamic Side by Side Table Generated by JavaScript -->
+      <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-4 text-xs text-slate-700">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <strong class="block text-slate-900 font-bold mb-0.5">Antigüedad y Alta:</strong>
+            Laborar mes natural completo. Nuevos ingresos cobran desde el 2do mes. Gerentes Suplentes requieren mínimo 6 meses en el puesto.
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <strong class="block text-slate-900 font-bold mb-0.5">Estatus PROGC:</strong>
+            Estar activo en nómina y asignado al equipo correspondiente en sistema PROGC durante el mes evaluado.
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <strong class="block text-slate-900 font-bold mb-0.5">Candado de $50 Mínimo:</strong>
+            Se requiere alcanzar un incentivo mensual mínimo acumulado de $50.00 MXN para procesar la dispersión.
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <strong class="block text-slate-900 font-bold mb-0.5">Redondeo Truncado:</strong>
+            Sin décimas en porcentajes de cumplimiento. Se aplica truncamiento directo (ej. 88.99% = 88%).
+          </div>
+        </div>
+
+        <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-200 text-blue-900">
+          <strong class="block font-bold text-xs mb-1">Atención de Aclaraciones Vía Service Desk:</strong>
+          <p class="text-[11px] leading-relaxed">Portal oficial: <strong>servicedesk.coppel.com</strong> -> "Gestión de Servicios Administrativos" -> "Aclaración de Incentivos Retail".</p>
+        </div>
       </div>
 
-      <div class="bg-white px-6 py-3 border-t border-slate-200 flex items-center justify-between">
-        <button onclick="clearComparison()" class="text-xs text-red-600 hover:text-red-800 font-bold flex items-center gap-1">
-          <i class="fa-solid fa-trash"></i> Vaciar Selección
+      <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 flex justify-end flex-shrink-0">
+        <button onclick="toggleGlobalRulesModal()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+          Cerrar
         </button>
-        <button onclick="closeCompareModal()" class="bg-coppel-blue hover:bg-blue-900 text-white text-xs font-bold px-5 py-2 rounded-lg transition">
-          Cerrar Comparador
+      </div>
+    </div>
+  </div>
+
+  <div id="compareModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="bg-coppel-darkBlue px-4 sm:px-6 py-3.5 text-white flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <i class="fa-solid fa-code-compare text-coppel-yellow text-lg"></i>
+          <div>
+            <h3 class="font-title font-bold text-sm sm:text-base">Matriz Comparativa de Esquemas</h3>
+            <p class="text-[11px] text-blue-200">Comparación de reglas, comisiones e indicadores</p>
+          </div>
+        </div>
+        <button onclick="closeCompareModal()" class="text-white/80 hover:text-white text-lg px-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="compareModalBody" class="p-3 sm:p-6 overflow-x-auto overflow-y-auto custom-scrollbar flex-grow bg-slate-50">
+        <!-- Dynamic Side-by-Side Table injected via JS -->
+      </div>
+
+      <div class="bg-white px-4 sm:px-6 py-3 border-t border-slate-200 flex items-center justify-between flex-shrink-0">
+        <button onclick="clearComparison()" class="text-xs text-red-600 hover:text-red-800 font-bold flex items-center gap-1">
+          <i class="fa-solid fa-trash"></i> Vaciar
+        </button>
+        <button onclick="closeCompareModal()" class="bg-coppel-blue hover:bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="calcModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="bg-coppel-blue px-5 py-3.5 text-white flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center space-x-2.5">
+          <i class="fa-solid fa-calculator text-coppel-yellow text-lg"></i>
+          <div>
+            <h3 id="calcModalTitle" class="font-title font-bold text-sm sm:text-base">Simulador de Incentivo</h3>
+            <p class="text-[10px] sm:text-xs text-blue-200">Proyección estimativa por cumplimiento</p>
+          </div>
+        </div>
+        <button onclick="closeCalcModal()" class="text-white/80 hover:text-white text-lg px-2">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="calcModalBody" class="p-4 sm:p-6 overflow-y-auto custom-scrollbar space-y-4 text-xs">
+        <!-- Dynamic Interactive Inputs injected via JS -->
+      </div>
+
+      <div class="bg-slate-50 px-5 py-3 border-t border-slate-200 flex items-center justify-between flex-shrink-0">
+        <div>
+          <span class="text-[10px] text-slate-500 font-bold uppercase block">Estimado a Cobrar</span>
+          <span id="calcTotalOutput" class="text-lg font-black text-emerald-600">$0.00 MXN</span>
+        </div>
+        <button onclick="closeCalcModal()" class="bg-coppel-darkBlue hover:bg-blue-900 text-white text-xs font-bold px-4 py-2 rounded-xl transition">
+          Aceptar
         </button>
       </div>
     </div>
   </div>
 
   <script>
-    // Complete Data Architecture parsed from Base_Conocimiento_Esquemas.md
+    // Full Scheme Knowledge Base Dataset
     const schemesData = [
       {
         id: "TRNA-001",
         name: "Tradicional Nacional-001",
         system: "Tradicional",
         status: "Nacional",
-        positions: ["Asesor ventas #89", "Asesor Motos #269", "Asesor tienda #204", "Asesor Ventas Muebles #1", "Asesor Ventas Ropa #17", "Asesor Ventas Zapatería #131", "Asesor línea Blanca #164", "Asesor Joyería y Relojería #278", "Asesor Electrónica #439"],
+        positions: ["Asesor ventas #89", "Asesor Motos #269", "Asesor tienda #204", "Asesor Muebles #1", "Asesor Ropa #17", "Asesor Zapatería #131", "Asesor Línea Blanca #164", "Asesor Joyería #278", "Asesor Electrónica #439"],
         glossary: [
-          { concept: "Venta de centro", def: "Venta asignada al centro (Ropa, Muebles, Zapatería, Electrónica, etc.)." },
-          { concept: "Venta tienda", def: "Venta total acumulada en toda la tienda." },
-          { concept: "Clientes nuevos", def: "Aperturas de crédito Coppel otorgadas." },
-          { concept: "Cobranza", def: "Monto total abonado en caja por clientes durante el mes." },
-          { concept: "Seguros y Servicios", def: "Club de protección, Motos, Celulares, Garantía Extendida y Armado." }
+          { concept: "Venta de centro", def: "Venta del centro asignado (Ropa, Muebles, Zapatería, Electrónica, etc.)." },
+          { concept: "Venta tienda", def: "Venta global acumulada en toda la sucursal." },
+          { concept: "Clientes nuevos", def: "Aperturas de crédito Coppel otorgadas en tienda." },
+          { concept: "Cobranza", def: "Recuperación de cartera y abonos en cajas." },
+          { concept: "Seguros / Servicios", def: "Club de Protección, Motos, Celulares, Garantías y Armados." }
         ],
         indicators: [
-          { name: "Venta de Centro vs Promedio Colaborador", type: "Matriz 2D", detail: "Hasta $2,000 con ≥130% cumplimiento y ≥700K venta promedio/colab." },
+          { name: "Venta de Centro vs Prom/Colab", type: "Matriz 2D", detail: "Hasta $2,000 con ≥130% cumplimiento y ≥700K venta prom/colab." },
           { name: "Venta de Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" },
           { name: "Clientes Nuevos Coppel", type: "Escala Fija", detail: "100%: $150 | 110%: $250 | ≥125%: $400" },
           { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 | 100%: $300 | ≥110%: $500" },
           { name: "Seguros (Club, Motos, Celular)", type: "Comisión %", detail: "Club/Motos: 3% a 5% | Celulares: 1.5% a 2.5%" },
-          { name: "Servicios (Garantía, Armado)", type: "Comisión %", detail: "Garantía Extendida: 4% | Armado: 4%" }
+          { name: "Servicios (Garantía, Armado)", type: "Comisión %", detail: "Garantías y Armado: 4% sobre venta individual" }
         ],
         rules: [
           "Traspasos entre equipos pierden Venta Centro pero conservan Venta Tienda, Cobranza y Seguros.",
-          "Truncamiento directo sin decimales en porcentajes (ej. 88.99% pasa a 88%).",
-          "Venta registrada con número individual de vendedor para cobro de seguros/servicios."
+          "Truncamiento directo sin decimales en porcentajes de cumplimiento (ej. 88.99% pasa a 88%)."
         ],
-        example: "Venta promedio por colaborador de $740,000 MXN y cumplimiento de meta de centro al 102.00% resulta en $1,175. Venta tienda al 118% otorga $500. Clientes nuevos al 112% otorga $250. Cobranza al 96% otorga $200. Total base = $2,125.",
-        payoutFrequency: "Mensual (Al cierre del mes siguiente al mes evaluado, ej. Ene -> Feb 28)."
+        example: "Venta promedio por colaborador de $740,000 MXN y cumplimiento de meta de centro al 102.00% resulta en $1,175. Venta tienda al 118% otorga $500. Clientes nuevos al 112% otorga $250. Cobranza al 96% otorga $200. Total base = $2,125 MXN.",
+        payoutFrequency: "Mensual (Al cierre del mes siguiente al evaluado)."
       },
       {
         id: "TRNA-002",
@@ -385,21 +410,19 @@
         status: "Nacional",
         positions: ["Cajero Multifuncional #21"],
         glossary: [
-          { concept: "Venta tienda", def: "Venta acumulada en toda la sucursal." },
-          { concept: "Cobranza", def: "Recuperación de cartera y abonos en cajas." },
-          { concept: "Clientes Nuevos", def: "Nuevas tarjetas de crédito Coppel autorizadas." }
+          { concept: "Venta tienda", def: "Venta total en la sucursal." },
+          { concept: "Cobranza", def: "Abonos recuperados en cajas de la tienda." },
+          { concept: "Clientes Nuevos", def: "Nuevos créditos Coppel autorizados." }
         ],
         indicators: [
           { name: "Venta de Tienda", type: "Escala Fija", detail: "100%: $300 | 105%: $400 | ≥110%: $500" },
           { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 | 100%: $300 | ≥110%: $500" },
           { name: "Clientes Nuevos Coppel", type: "Escala Fija", detail: "100%: $150 | 115%: $300 | ≥125%: $400" },
-          { name: "Seguros (Club, Motos, Celular)", type: "Comisión %", detail: "Club/Motos: 3%-5% | Celulares: 1.5%-2.5%" },
-          { name: "Servicios", type: "Comisión %", detail: "Garantías y Armados: 4%" }
+          { name: "Seguros y Servicios", type: "Comisión %", detail: "Club/Motos: 3%-5% | Celulares: 1.5%-2.5% | Garantías/Armado: 4%" }
         ],
         rules: [
           "Sin evaluación de Venta Centro individual.",
-          "Incentivo $0 si Venta Tienda es <100%.",
-          "Monto mínimo de pago $50."
+          "Incentivo $0 si Venta Tienda es <100%."
         ],
         example: "Tienda Venta 118% ($500), Cobranza 107% ($400), Clientes Nuevos 112% ($250). Total = $1,150 + comisiones individuales.",
         payoutFrequency: "Mensual (Cierre del mes siguiente)."
@@ -411,21 +434,17 @@
         status: "Nacional",
         positions: ["Optometrista Certificado #169"],
         glossary: [
-          { concept: "Venta de Óptica", def: "Venta de armazones, micas y lentes en sucursal." },
-          { concept: "Certificación", def: "Optometrista con título o certificación acreditada." }
+          { concept: "Venta Óptica", def: "Armazones, micas y lentes de contacto vendidos en la tienda." }
         ],
         indicators: [
-          { name: "Venta de Centro Óptica", type: "Matriz Volumen", detail: "Desde $200 (<60K/80%) hasta $3,000 (≥180K/≥150%)." },
+          { name: "Venta Centro Óptica", type: "Matriz Volumen", detail: "Desde $200 (<60K/80%) hasta $3,000 (≥180K/≥150%)." },
           { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" },
-          { name: "Clientes Nuevos", type: "Escala Fija", detail: "100%: $150 a ≥125%: $400" },
-          { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 a ≥110%: $500" },
-          { name: "Club de Protección / Garantías", type: "Comisión %", detail: "Club: 3%-5% | Garantía Extendida: 4%" }
+          { name: "Cobranza y Clientes Nuevos", type: "Escala Fija", detail: "Hasta $500 en Cobranza y $400 en Clientes Nuevos" }
         ],
         rules: [
-          "Requiere registro de venta individual con número de vendedor.",
-          "Aplica tabulador completo de Optometrista A."
+          "Requiere número de vendedor individual en sistema para cobro de comisiones."
         ],
-        example: "Cumplimiento Óptica 96% en tienda con venta óptica de $100K-$120K otorga $800. Venta tienda 105% otorga $300. Total = $1,100.",
+        example: "Cumplimiento Óptica 96% en tienda con venta óptica de $100K-$120K otorga $800. Venta tienda 105% otorga $300. Total = $1,100 MXN.",
         payoutFrequency: "Mensual (Cierre del mes siguiente)."
       },
       {
@@ -435,19 +454,16 @@
         status: "Nacional",
         positions: ["Optometrista No Certificado #170"],
         glossary: [
-          { concept: "No Certificado", def: "Colaborador en proceso de acreditación o en práctica de gabinete." }
+          { concept: "No Certificado", def: "Colaborador optometrista en proceso de acreditación." }
         ],
         indicators: [
-          { name: "Venta de Centro Óptica", type: "Matriz Volumen (50%)", detail: "Desde $100 (<60K/80%) hasta $1,500 (≥180K/≥150%)." },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" },
-          { name: "Clientes Nuevos", type: "Escala Fija", detail: "100%: $150 a ≥125%: $400" },
-          { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 a ≥110%: $500" }
+          { name: "Venta Centro Óptica", type: "Matriz Volumen (50%)", detail: "Desde $100 (<60K/80%) hasta $1,500 (≥180K/≥150%)." },
+          { name: "Venta Tienda, Cobranza, CN", type: "Escala Fija", detail: "Mismos valores que TRNA-003 para tienda" }
         ],
         rules: [
-          "Tabulador ajustado al 50% en Venta Centro comparado con TRNA-003.",
-          "Mismas reglas de Venta Tienda, Cobranza y Seguros."
+          "Escala ajustada al 50% de valor con respecto al certificado."
         ],
-        example: "Óptica 96% en $100K-$120K otorga $400 (vs $800 de certificado). Total = $700 + tienda.",
+        example: "Óptica 96% en $100K-$120K otorga $400 (vs $800 de certificado). Total = $700 MXN + tienda.",
         payoutFrequency: "Mensual (Cierre del mes siguiente)."
       },
       {
@@ -457,18 +473,16 @@
         status: "Nacional",
         positions: ["Asesor Telcel #202"],
         glossary: [
-          { concept: "Telefonía Telcel", def: "Venta de Telcel + AT&T + Movistar en la tienda." }
+          { concept: "Telcel / Carriers", def: "Venta de Telefonía Telcel, AT&T y Movistar." }
         ],
         indicators: [
-          { name: "Venta Telcel Tienda", type: "Matriz Rango Tienda", detail: "Rangos de tienda: <400K, 400K-1M, 1M-1.6M, ≥1.6M. Pago hasta $3,050." },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 a ≥110%: $500" },
-          { name: "Cobranza y Clientes Nuevos", type: "Escala Fija", detail: "Hasta $500 en Cobranza y $400 en Clientes Nuevos" },
-          { name: "Seguros Celular", type: "Comisión %", detail: "1.5% (<100%) o 2.5% (≥100%)" }
+          { name: "Venta Telcel Tienda", type: "Matriz Rango Tienda", detail: "Rangos: <400K, 400K-1M, 1M-1.6M, ≥1.6M. Pago hasta $3,050." },
+          { name: "Venta Tienda y Cobranza", type: "Escala Fija", detail: "Hasta $500 en Venta y $500 en Cobranza" }
         ],
         rules: [
-          "Monto de incentivo varía por volumen total vendido de telefonía en la tienda."
+          "Incentivo variable dependiendo del volumen de venta telefonía en la tienda."
         ],
-        example: "Telcel 96.96% en tienda de $1M-$1.6M genera $900. Tienda 105% genera $300. Total = $1,200.",
+        example: "Telcel 96.96% en tienda de $1M-$1.6M genera $900. Tienda 105% genera $300. Total = $1,200 MXN.",
         payoutFrequency: "Mensual (Cierre del mes siguiente)."
       },
       {
@@ -478,17 +492,16 @@
         status: "Nacional",
         positions: ["Asesor de telefonía libre #453"],
         glossary: [
-          { concept: "Telefonía Libre", def: "Equipos libres de fábrica de cualquier marca/carrier." }
+          { concept: "Telefonía Libre", def: "Equipos libres de fábrica de cualquier marca." }
         ],
         indicators: [
           { name: "Venta Telefonía Libre", type: "Matriz Rango Tienda", detail: "Rangos: <200K, 200K-600K, 600K-1M, ≥1M. Pago hasta $3,950." },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 a ≥110%: $500" },
-          { name: "Seguros y Garantías", type: "Comisión %", detail: "Seguro Celular: 1.5%-2.5% | Garantía: 4%" }
+          { name: "Seguro Celular", type: "Comisión %", detail: "1.5% (<100%) o 2.5% (≥100%)" }
         ],
         rules: [
-          "No incluye comisiones por servicios de armado."
+          "Excluye comisiones por servicios de armado de muebles."
         ],
-        example: "Libre 96.96% en tienda $600K-$1M genera $1,050. Total con tienda = $1,350.",
+        example: "Libre 96.96% en tienda $600K-$1M genera $1,050. Total con tienda = $1,350 MXN.",
         payoutFrequency: "Mensual (Cierre del mes siguiente)."
       },
       {
@@ -498,18 +511,17 @@
         status: "Nacional",
         positions: ["Asesor Tel Suplente #205"],
         glossary: [
-          { concept: "Telefonía Total", def: "Suma global de Telefonía Telcel + Telefonía Libre." }
+          { concept: "Telefonía Total", def: "Suma de Telefonía Telcel y Telefonía Libre." }
         ],
         indicators: [
           { name: "Venta Telefonía Total", type: "Escala Lineal", detail: "89%: $400 | 100%: $700 | 110%: $1,000 | ≥130%: $1,550" },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 a ≥110%: $500" },
-          { name: "Cobranza y Clientes Nuevos", type: "Escala Fija", detail: "Mismos tabuladores de $150 a $500" }
+          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" }
         ],
         rules: [
-          "Sin cruce por volumen de tienda.",
-          "Pago quincenal especial."
+          "Sin evaluación de rango de volumen de tienda.",
+          "Pago en 2da quincena."
         ],
-        example: "Telefonía Total 97% genera $550. Tienda 105% genera $300. Total = $850.",
+        example: "Telefonía Total 97% genera $550. Tienda 105% genera $300. Total = $850 MXN.",
         payoutFrequency: "2da Quincena del mes siguiente."
       },
       {
@@ -519,18 +531,17 @@
         status: "Nacional",
         positions: ["Almacenista #5", "Auxiliar de piso #11", "Paqueteria #19", "Serv y Gar #463"],
         glossary: [
-          { concept: "Incentivo Colectivo", def: "Incentivo operativo basado en metas globales de tienda." }
+          { concept: "Personal de Soporte", def: "Incentivo operativo colectivo por metas globales." }
         ],
         indicators: [
           { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $200 | 105%: $300 | ≥110%: $400" },
           { name: "Clientes Nuevos", type: "Escala Fija", detail: "100%: $100 | 110%: $200 | ≥125%: $350" },
-          { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 | 100%: $300 | ≥110%: $500" },
-          { name: "Seguros / Servicios", type: "Comisión %", detail: "Club/Motos: 3%-5% | Celulares: 1.5%-2.5% | Garantías: 4%" }
+          { name: "Cobranza Tienda", type: "Escala Fija", detail: "89%: $150 | 100%: $300 | ≥110%: $500" }
         ],
         rules: [
-          "Aplica para todo el personal de soporte de tienda."
+          "Aplica para todo el personal operativo de piso y almacén."
         ],
-        example: "Tienda 118% ($400), Clientes Nuevos 112% ($200), Cobranza 93% ($150). Total = $750.",
+        example: "Tienda 118% ($400), Clientes Nuevos 112% ($200), Cobranza 93% ($150). Total = $750 MXN.",
         payoutFrequency: "2da Quincena del mes siguiente."
       },
       {
@@ -540,18 +551,17 @@
         status: "Nacional",
         positions: ["Gerente Suplente #36", "Gerente Tienda Muebles #1031", "Gerente Tienda Ropa #1032"],
         glossary: [
-          { concept: "Multiplicador Faltante", def: "Factor (1.10x, 1.00x, 0.90x) basado en merma de inventario." }
+          { concept: "Multiplicador Faltante", def: "Factor (1.10x, 1.00x, 0.90x) por inventario de merma." }
         ],
         indicators: [
-          { name: "Venta Centro vs Venta Colaborador", type: "Matriz 2D", detail: "Hasta $4,850 (≥125% cumplimiento y ≥700K vta/colab)." },
+          { name: "Venta Centro vs Colaborador", type: "Matriz 2D", detail: "Hasta $4,850 (≥125% cumplimiento y ≥700K vta/colab)." },
           { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $450 | 105%: $750 | ≥110%: $1,050" },
-          { name: "Clientes Nuevos y Cobranza", type: "Escala Fija", detail: "Hasta $1,150 cada uno (≥125%)" },
           { name: "Multiplicador de Faltante", type: "Factor", detail: "<1.00%: 1.10x | 1.00%-1.49%: 1.00x | ≥1.50%: 0.90x" }
         ],
         rules: [
-          "Formula: (Centro + Tienda + Clientes + Cobranza) * Multiplicador Faltante."
+          "Fórmula: (Centro + Tienda + Clientes + Cobranza) * Multiplicador Faltante."
         ],
-        example: "Incentivo ganado $4,250 MXN con Faltante 0.95% (<1.00%). Ajustado x 1.10 = $4,675 MXN.",
+        example: "Incentivo acumulado $4,250 MXN con Faltante 0.95% (<1.00%). Ajustado x 1.10 = $4,675 MXN.",
         payoutFrequency: "2da Quincena del mes siguiente."
       },
       {
@@ -561,7 +571,7 @@
         status: "Nacional",
         positions: ["Gerente General de tienda #466"],
         glossary: [
-          { concept: "Trimestral", def: "Evaluación y pago cada 3 meses naturales." }
+          { concept: "Incentivo Trimestral", def: "Evaluación y dispersión cada 3 meses naturales." }
         ],
         indicators: [
           { name: "Venta Tienda Trimestral", type: "Escala Fija", detail: "93%: $6,500 | 100%: $12,000 | 105%: $15,500 | ≥110%: $18,000" },
@@ -569,10 +579,10 @@
           { name: "Clientes Nuevos Trimestral", type: "Escala Fija", detail: "100%: $3,800 | 105%: $5,200 | 110%: $6,500 | ≥120%: $7,500" }
         ],
         rules: [
-          "Liquidación a 45 días posteriores al cierre trimestral."
+          "Liquidación a 45 días pos-cierre trimestral."
         ],
         example: "Venta 99.6% ($6,500), Cobranza 98.4% ($2,400), Clientes Nuevos 110% ($6,500). Total Trimestral = $15,400 MXN.",
-        payoutFrequency: "Trimestral (45 días post-cierre)."
+        payoutFrequency: "Trimestral (45 días pos-cierre)."
       },
       {
         id: "TRNA-G02",
@@ -581,40 +591,18 @@
         status: "Nacional",
         positions: ["Gerente Zona tienda #697"],
         glossary: [
-          { concept: "Zona", def: "Grupo de tiendas bajo la supervisión directa del Gerente de Zona." }
+          { concept: "Gerencia de Zona", def: "Supervisión territorial de sucursales Coppel." }
         ],
         indicators: [
           { name: "Venta Zona Trimestral", type: "Escala Fija", detail: "95%: $8,500 | 100%: $14,500 | ≥110%: $20,500" },
-          { name: "Cobranza Zona", type: "Escala Fija", detail: "98%: $4,200 | 100%: $8,500 | ≥110%: $12,000" },
-          { name: "Clientes Nuevos Zona", type: "Escala Fija", detail: "100%: $7,000 | 110%: $11,000 | ≥120%: $14,000" },
-          { name: "Multiplicador 15%", type: "Candado 25%", detail: "+15% extra si ≥25% de tiendas aprueban candados (Vta≥97.5%, Cob≥98%, CN≥85%)." }
+          { name: "Cobranza Zona Trimestral", type: "Escala Fija", detail: "98%: $4,200 | 100%: $8,500 | ≥110%: $12,000" },
+          { name: "Multiplicador 15%", type: "Candado 25%", detail: "+15% extra si ≥25% de tiendas aprueban candados de Venta, Cobranza y CN." }
         ],
         rules: [
-          "Requiere validación del candado del 25% de sucursales aprobadas."
+          "Requiere cumplimiento del candado del 25% de sucursales aprobadas."
         ],
-        example: "Incentivo por metas $34,000. Aprueba candado 25% tiendas (+15% = $5,100). Total = $39,100 MXN.",
-        payoutFrequency: "Trimestral (45 días post-cierre)."
-      },
-      {
-        id: "TRNA-G03",
-        name: "Tradicional Nacional-G03",
-        system: "Tradicional",
-        status: "Nacional",
-        positions: ["Gerente Regional de tiendas #2844"],
-        glossary: [
-          { concept: "Región", def: "Territorio compuesto por múltiples zonas de tiendas Coppel." }
-        ],
-        indicators: [
-          { name: "Venta Región Trimestral", type: "Escala Fija", detail: "95%: $17,000 | 100%: $29,000 | ≥110%: $41,000" },
-          { name: "Cobranza Región", type: "Escala Fija", detail: "98%: $8,400 | 100%: $17,000 | ≥110%: $24,000" },
-          { name: "Clientes Nuevos Región", type: "Escala Fija", detail: "100%: $14,500 | ≥120%: $28,500" },
-          { name: "Multiplicador 15%", type: "Candado 25%", detail: "+15% extra si ≥25% de tiendas aprueban candados." }
-        ],
-        rules: [
-          "Mismas reglas de candado del 25% de tiendas aprobadas en la región."
-        ],
-        example: "Metas ganadas $51,900. Multiplicador 15% aprobado ($7,785). Total Trimestral = $59,685 MXN.",
-        payoutFrequency: "Trimestral (45 días post-cierre)."
+        example: "Metas ganadas $34,000 + Candado 25% tiendas (+15% = $5,100). Total = $39,100 MXN.",
+        payoutFrequency: "Trimestral (45 días pos-cierre)."
       },
       {
         id: "EENA-001",
@@ -623,18 +611,16 @@
         status: "Nacional",
         positions: ["Asesor ventas #89", "Asesor Motos #269", "Asesor tienda #204", "Asesor Muebles #1", "Asesor Ropa #17"],
         glossary: [
-          { concept: "Venta de Equipo", def: "Venta atribuida al equipo asignado (Telefonía, Óptica o Ventas General)." }
+          { concept: "Venta de Equipo", def: "Venta grupal atribuida al equipo comercial asignado." }
         ],
         indicators: [
           { name: "Venta de Equipo", type: "Escala Directa", detail: "89%: $600 | 100%: $1,000 | 110%: $1,300 | ≥130%: $1,900" },
-          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" },
-          { name: "Clientes Nuevos y Cobranza", type: "Escala Fija", detail: "Clientes: $100-$350 | Cobranza: $150-$500" },
-          { name: "Comisiones Seguros / Servicios", type: "Comisión %", detail: "Club/Motos: 3%-5% | Celular: 1.5%-2.5% | Garantías: 4%" }
+          { name: "Venta Tienda", type: "Escala Fija", detail: "100%: $150 | 105%: $300 | ≥110%: $500" }
         ],
         rules: [
-          "Sustituye la matriz promedio individual por cumplimiento de equipo directo."
+          "Sustituye la matriz individual por cumplimiento de equipo directo."
         ],
-        example: "Equipo 102% ($1,000), Tienda 118% ($500), Clientes 111% ($200), Cobranza 96% ($200). Total Base = $1,900.",
+        example: "Equipo 102% ($1,000), Tienda 118% ($500), Clientes 111% ($200), Cobranza 96% ($200). Total Base = $1,900 MXN.",
         payoutFrequency: "2da Quincena del mes siguiente."
       },
       {
@@ -644,18 +630,17 @@
         status: "Prueba",
         positions: ["Asesor ventas #89", "Asesor Motos #269", "Asesor Muebles #1", "Asesor Ropa #17"],
         glossary: [
-          { concept: "Multiplicadores Crédito/Digital", def: "+20% por Venta Crédito ≥90% y +20% por 1ra compra Digital ≥90%." }
+          { concept: "Multiplicadores Digital/Crédito", def: "+20% por Venta Crédito ≥90% y +20% por 1ra compra Digital ≥90%." }
         ],
         indicators: [
           { name: "Pilar 1: Venta de Equipo", type: "Escala Fija", detail: "80%: $400 | 100%: $1,300 | ≥120%: $1,900" },
           { name: "Pilar 2: Multiplicadores", type: "Factor (+40%)", detail: "+20% Crédito ≥90% + 20% Digital ≥90%" },
-          { name: "Pilar 3: Comisiones", type: "Comisión %", detail: "Club/Motos: 3%-5% | Celular: 1.5%-2.5%" },
-          { name: "Pilar 4: Venta Tienda Extra", type: "Multiplicador 20%", detail: "20% adicional sobre TODO lo ganado si Tienda ≥100%" }
+          { name: "Pilar 3: Venta Tienda Extra", type: "Multiplicador 20%", detail: "20% adicional sobre TODO lo ganado si Tienda ≥100%" }
         ],
         rules: [
-          "Vigencia de Prueba: Junio 2026 - Septiembre 2026 en tiendas seleccionadas."
+          "Vigencia de Prueba: Junio 2026 - Septiembre 2026."
         ],
-        example: "Base Equipo $1,300 + Multiplicadores 40% ($520) + Comisiones ($2,980.75) = $4,800.75. Tienda ≥100% (+20%) = $5,760.90 MXN.",
+        example: "Base $1,300 + Multiplicadores 40% ($520) + Comisiones ($2,980.75) = $4,800.75. Tienda ≥100% (+20%) = $5,760.90 MXN.",
         payoutFrequency: "2da Quincena del mes siguiente."
       },
       {
@@ -665,8 +650,7 @@
         status: "Nacional",
         positions: ["Asesor Motos #269"],
         glossary: [
-          { concept: "Venta Asesor", def: "Comisión fija 0.55% sobre ventas contado y crédito." },
-          { concept: "Multiplicadores ACM", def: "Factores por ISA (1.10x), Seguros (1.10x) y Meta Agencia (1.05x)." }
+          { concept: "Comisión Venta", def: "0.55% directo sobre todas las ventas a crédito y contado." }
         ],
         indicators: [
           { name: "Comisión Venta Asesor", type: "Porcentaje Fijo", detail: "0.55% (0.0055) directo sobre monto vendido." },
@@ -675,7 +659,7 @@
           { name: "Multiplicador Venta Agencia", type: "Factor", detail: "70%-99%: 1.00x | 100%-119%: 1.05x | ≥120%: 1.10x" }
         ],
         rules: [
-          "Formula: Venta * 0.0055 * M_ISA * M_Seguros * M_Agencia."
+          "Fórmula: Venta * 0.0055 * ISA * Seguros * Agencia."
         ],
         example: "Venta $471,353 * 0.0055 = $2,592. Con ISA 100% (1.10), Seguros 75% (1.10) y Agencia 109% (1.05) -> Total = $3,293.13 MXN.",
         payoutFrequency: "Mensual (Cierre del mes siguiente)."
@@ -687,31 +671,38 @@
         status: "Prueba",
         positions: ["Gerente Tienda Motos #1039"],
         glossary: [
-          { concept: "Agencia Motos", def: "Unidad de negocio especializada en motocicletas y accesorios." }
+          { concept: "Agencia Motos", def: "Sucursal especializada en motocicletas y accesorios." }
         ],
         indicators: [
-          { name: "Venta Agencia & Conversión Seguros", type: "Matriz 2D", detail: "Hasta $5,000 con ≥110% venta y ≥60% conversión seguros." },
+          { name: "Venta Agencia & Conversión", type: "Matriz 2D", detail: "Hasta $5,000 con ≥110% venta y ≥60% conversión seguros." },
           { name: "Clientes Nuevos Agencia", type: "Escala Fija", detail: "80%: $200 | 100%: $550 | ≥120%: $2,000" },
-          { name: "Cobranza Agencia", type: "Escala Fija", detail: "97%: $1,000 | 100%: $1,500 | ≥110%: $2,500" },
-          { name: "NPS y Seguros Agencia", type: "Escala Fija", detail: "NPS: hasta $1,000 | Seguros: hasta $1,200" }
+          { name: "Cobranza Agencia", type: "Escala Fija", detail: "97%: $1,000 | 100%: $1,500 | ≥110%: $2,500" }
         ],
         rules: [
           "Prueba vigente Abril 2026 - Agosto 2026."
         ],
-        example: "Venta 108% con conversión 86% ($4,000) + Clientes 105% ($1,000) + Cobranza 105% ($2,000) + NPS ($500) + Seguros ($600) = $8,100 MXN.",
+        example: "Venta 108% con conversión 86% ($4,000) + Clientes 105% ($1,000) + Cobranza 105% ($2,000) + NPS ($500) = $8,100 MXN.",
         payoutFrequency: "Mensual (Cierre del mes siguiente)."
       }
     ];
 
-    // App State Management
+    // State Management
     let filteredSchemes = [...schemesData];
     let selectedForCompare = [];
     let currentPage = 1;
 
-    // Initialize Page
+    // Initialization
     document.addEventListener('DOMContentLoaded', () => {
       applyFilters();
     });
+
+    function toggleMobileFilters() {
+      const sidebar = document.getElementById('sidebarFilter');
+      sidebar.classList.toggle('hidden');
+      if (!sidebar.classList.contains('hidden')) {
+        sidebar.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
 
     function applyFilters() {
       const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -721,26 +712,20 @@
       const sortVal = document.getElementById('sortSelect').value;
 
       filteredSchemes = schemesData.filter(s => {
-        // Search matches
         const matchesSearch = !searchVal || 
           s.id.toLowerCase().includes(searchVal) ||
           s.name.toLowerCase().includes(searchVal) ||
           s.positions.some(p => p.toLowerCase().includes(searchVal)) ||
           s.indicators.some(i => i.name.toLowerCase().includes(searchVal));
 
-        // System matches
         const matchesSystem = (systemVal === 'ALL') || s.system === systemVal;
-
-        // Status matches
         const matchesStatus = (statusVal === 'ALL') || s.status === statusVal;
-
-        // Position matches
         const matchesPosition = (positionVal === 'ALL') || s.positions.some(p => p.toLowerCase().includes(positionVal.toLowerCase()));
 
         return matchesSearch && matchesSystem && matchesStatus && matchesPosition;
       });
 
-      // Sorting Logic
+      // Sorting
       if (sortVal === 'id-asc') {
         filteredSchemes.sort((a, b) => a.id.localeCompare(b.id));
       } else if (sortVal === 'id-desc') {
@@ -775,13 +760,13 @@
       const position = document.getElementById('positionFilter').value;
 
       if (system !== 'ALL') {
-        container.innerHTML += `<span class="bg-blue-100 text-coppel-blue px-2 py-0.5 rounded font-semibold">Sistema: ${system}</span>`;
+        container.innerHTML += `<span class="bg-blue-100 text-coppel-blue px-2 py-0.5 rounded font-semibold">${system}</span>`;
       }
       if (status !== 'ALL') {
-        container.innerHTML += `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-semibold">Estatus: ${status}</span>`;
+        container.innerHTML += `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-semibold">${status}</span>`;
       }
       if (position !== 'ALL') {
-        container.innerHTML += `<span class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-semibold">Puesto: ${position}</span>`;
+        container.innerHTML += `<span class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded font-semibold">${position}</span>`;
       }
     }
 
@@ -803,7 +788,6 @@
       noResults.classList.add('hidden');
       document.getElementById('paginationContainer').classList.remove('hidden');
 
-      // Pagination Calculation
       let limit = limitVal === 'ALL' ? filteredSchemes.length : parseInt(limitVal);
       const totalPages = Math.ceil(filteredSchemes.length / limit) || 1;
       
@@ -821,74 +805,79 @@
         const statusBadgeClass = s.status === 'Nacional' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-amber-100 text-amber-800 border-amber-300';
         
         return `
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden card-transition flex flex-col">
-            <!-- Scheme Header -->
-            <div class="bg-slate-900 text-white p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800">
-              <div class="space-y-1">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col transition hover:shadow-md">
+            
+            <!-- Scheme Mobile-Optimized Header -->
+            <div class="bg-coppel-darkBlue text-white p-4 sm:p-5 border-b border-slate-800">
+              <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
                 <div class="flex items-center space-x-2">
-                  <span class="font-title font-extrabold text-2xl text-coppel-yellow">${s.id}</span>
-                  <span class="text-xs px-2.5 py-0.5 rounded-full border font-bold ${statusBadgeClass}">${s.status}</span>
-                  <span class="text-xs px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-200 border border-blue-800 font-medium">${s.system}</span>
+                  <span class="font-title font-extrabold text-xl sm:text-2xl text-coppel-yellow">${s.id}</span>
+                  <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded-full border font-bold ${statusBadgeClass}">${s.status}</span>
                 </div>
-                <h3 class="font-title font-bold text-base text-slate-100">${s.name}</h3>
+                
+                <div class="flex items-center space-x-2">
+                  <button onclick="openCalcModal('${s.id}')" class="bg-blue-900/90 hover:bg-blue-800 text-coppel-yellow text-xs font-bold px-2.5 py-1.5 rounded-xl border border-blue-400/30 flex items-center gap-1 transition">
+                    <i class="fa-solid fa-calculator text-xs"></i>
+                    <span>Simular</span>
+                  </button>
+                  <button onclick="toggleCompare('${s.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1 ${isCompared ? 'bg-coppel-yellow text-coppel-darkBlue' : 'bg-slate-800 text-slate-300 hover:text-white'}">
+                    <i class="fa-solid ${isCompared ? 'fa-check' : 'fa-plus'} text-[10px]"></i>
+                    <span class="hidden sm:inline">${isCompared ? 'Comparando' : 'Comparar'}</span>
+                  </button>
+                </div>
               </div>
 
-              <div class="flex items-center space-x-3">
-                <button onclick="toggleCompare('${s.id}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 ${isCompared ? 'bg-coppel-yellow text-slate-900' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'}">
-                  <i class="fa-solid ${isCompared ? 'fa-check' : 'fa-plus'}"></i>
-                  <span>${isCompared ? 'Seleccionado' : 'Comparar'}</span>
-                </button>
-              </div>
+              <h3 class="font-title font-bold text-sm sm:text-base text-slate-100">${s.name}</h3>
+              <p class="text-[11px] text-blue-200 mt-0.5">Sistema: <strong class="text-white">${s.system}</strong></p>
             </div>
 
-            <!-- Position Tags -->
-            <div class="bg-slate-50 px-5 py-2.5 border-b border-slate-100 flex items-center space-x-2 overflow-x-auto text-xs">
-              <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px] flex-shrink-0">Puestos Gobernados:</span>
+            <!-- Position Tags Scrollable Bar -->
+            <div class="bg-slate-50 px-3 sm:px-5 py-2 border-b border-slate-100 flex items-center space-x-2 overflow-x-auto custom-scrollbar text-[11px]">
+              <span class="font-bold text-slate-500 uppercase tracking-wider text-[10px] flex-shrink-0">Puestos:</span>
               <div class="flex items-center space-x-1.5 flex-nowrap">
-                ${s.positions.map(p => `<span class="bg-white border border-slate-200 text-slate-700 font-semibold px-2 py-0.5 rounded text-[11px] whitespace-nowrap">${p}</span>`).join('')}
+                ${s.positions.map(p => `<span class="bg-white border border-slate-200 text-slate-700 font-medium px-2 py-0.5 rounded-lg text-[10px] whitespace-nowrap">${p}</span>`).join('')}
               </div>
             </div>
 
-            <!-- Tabbed Navigation Inside Card -->
-            <div class="border-b border-slate-200 bg-white px-5 flex space-x-6 text-xs font-medium">
-              <button onclick="switchTab('${s.id}', 'indicadores')" id="tab-btn-${s.id}-indicadores" class="py-3 tab-active">
-                <i class="fa-solid fa-chart-pie mr-1"></i> Indicadores y Glosario
+            <!-- Tabbed Navigation Inside Card (Horizontally Scrollable) -->
+            <div class="border-b border-slate-200 bg-white px-3 sm:px-5 flex space-x-2 sm:space-x-4 overflow-x-auto no-scrollbar text-xs font-semibold flex-shrink-0">
+              <button onclick="switchTab('${s.id}', 'indicadores')" id="tab-btn-${s.id}-indicadores" class="py-2.5 px-2 tab-active whitespace-nowrap rounded-t-lg transition flex items-center gap-1">
+                <i class="fa-solid fa-chart-pie text-coppel-blue"></i> <span>Indicadores</span>
               </button>
-              <button onclick="switchTab('${s.id}', 'reglas')" id="tab-btn-${s.id}-reglas" class="py-3 text-slate-500 hover:text-slate-800">
-                <i class="fa-solid fa-shield-cat mr-1"></i> Reglas y Candados
+              <button onclick="switchTab('${s.id}', 'reglas')" id="tab-btn-${s.id}-reglas" class="py-2.5 px-2 text-slate-500 hover:text-slate-800 whitespace-nowrap rounded-t-lg transition flex items-center gap-1">
+                <i class="fa-solid fa-shield-cat"></i> <span>Reglas</span>
               </button>
-              <button onclick="switchTab('${s.id}', 'ejemplo')" id="tab-btn-${s.id}-ejemplo" class="py-3 text-slate-500 hover:text-slate-800">
-                <i class="fa-solid fa-calculator mr-1"></i> Ejemplo Práctico
+              <button onclick="switchTab('${s.id}', 'ejemplo')" id="tab-btn-${s.id}-ejemplo" class="py-2.5 px-2 text-slate-500 hover:text-slate-800 whitespace-nowrap rounded-t-lg transition flex items-center gap-1">
+                <i class="fa-solid fa-calculator"></i> <span>Ejemplo</span>
               </button>
-              <button onclick="switchTab('${s.id}', 'pago')" id="tab-btn-${s.id}-pago" class="py-3 text-slate-500 hover:text-slate-800">
-                <i class="fa-solid fa-calendar-check mr-1"></i> Periodicidad de Pago
+              <button onclick="switchTab('${s.id}', 'pago')" id="tab-btn-${s.id}-pago" class="py-2.5 px-2 text-slate-500 hover:text-slate-800 whitespace-nowrap rounded-t-lg transition flex items-center gap-1">
+                <i class="fa-solid fa-calendar-check"></i> <span>Pago</span>
               </button>
             </div>
 
             <!-- Tab Contents -->
-            <div class="p-5 flex-grow text-xs text-slate-700 bg-white">
+            <div class="p-3.5 sm:p-5 flex-grow text-xs text-slate-700 bg-white">
+              
               <!-- Tab 1: Indicadores -->
-              <div id="tab-content-${s.id}-indicadores" class="space-y-4">
-                <div>
-                  <h4 class="font-bold text-slate-900 mb-2 uppercase text-[11px] tracking-wider text-coppel-blue">Indicadores Clave del Esquema</h4>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                    ${s.indicators.map(i => `
-                      <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                        <div class="flex items-center justify-between mb-1">
-                          <strong class="text-slate-800 font-bold">${i.name}</strong>
-                          <span class="text-[10px] bg-blue-100 text-coppel-blue font-bold px-1.5 py-0.5 rounded">${i.type}</span>
-                        </div>
-                        <p class="text-slate-600 text-[11px]">${i.detail}</p>
+              <div id="tab-content-${s.id}-indicadores" class="space-y-3">
+                <h4 class="font-bold text-slate-900 uppercase text-[10px] sm:text-[11px] tracking-wider text-coppel-blue">Indicadores y Tabuladores del Esquema</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  ${s.indicators.map(i => `
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                      <div class="flex items-center justify-between mb-1 gap-1">
+                        <strong class="text-slate-900 font-bold truncate">${i.name}</strong>
+                        <span class="text-[9px] bg-blue-100 text-coppel-blue font-extrabold px-1.5 py-0.5 rounded flex-shrink-0">${i.type}</span>
                       </div>
-                    `).join('')}
-                  </div>
+                      <p class="text-slate-600 text-[11px] leading-snug">${i.detail}</p>
+                    </div>
+                  `).join('')}
                 </div>
 
-                <div>
-                  <h4 class="font-bold text-slate-900 mb-2 uppercase text-[11px] tracking-wider text-coppel-blue">Glosario de Conceptos</h4>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="pt-2">
+                  <h5 class="font-bold text-slate-800 text-[11px] mb-1">Glosario de Términos:</h5>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                     ${s.glossary.map(g => `
-                      <div class="text-[11px] bg-white p-2 rounded border border-slate-100">
+                      <div class="text-[11px] bg-slate-50 p-2 rounded-lg border border-slate-100">
                         <strong class="text-slate-800">${g.concept}:</strong> ${g.def}
                       </div>
                     `).join('')}
@@ -897,39 +886,40 @@
               </div>
 
               <!-- Tab 2: Reglas -->
-              <div id="tab-content-${s.id}-reglas" class="hidden space-y-3">
-                <h4 class="font-bold text-slate-900 uppercase text-[11px] tracking-wider text-coppel-blue">Candados y Criterios Específicos</h4>
-                <ul class="space-y-2">
+              <div id="tab-content-${s.id}-reglas" class="hidden space-y-2.5">
+                <h4 class="font-bold text-slate-900 uppercase text-[10px] sm:text-[11px] tracking-wider text-coppel-blue">Candados y Criterios Específicos</h4>
+                <ul class="space-y-1.5">
                   ${s.rules.map(r => `
-                    <li class="flex items-start space-x-2 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                      <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
-                      <span>${r}</span>
+                    <li class="flex items-start space-x-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                      <i class="fa-solid fa-circle-check text-emerald-600 text-xs mt-0.5 flex-shrink-0"></i>
+                      <span class="leading-relaxed text-[11px]">${r}</span>
                     </li>
                   `).join('')}
                 </ul>
               </div>
 
               <!-- Tab 3: Ejemplo -->
-              <div id="tab-content-${s.id}-ejemplo" class="hidden space-y-3">
-                <h4 class="font-bold text-slate-900 uppercase text-[11px] tracking-wider text-coppel-blue">Caso Práctico de Cálculo</h4>
-                <div class="bg-blue-50/60 border border-blue-200 p-4 rounded-xl text-slate-800 space-y-2 leading-relaxed">
+              <div id="tab-content-${s.id}-ejemplo" class="hidden space-y-2.5">
+                <h4 class="font-bold text-slate-900 uppercase text-[10px] sm:text-[11px] tracking-wider text-coppel-blue">Caso Práctico de Liquidación</h4>
+                <div class="bg-blue-50/70 border border-blue-200 p-3.5 sm:p-4 rounded-xl text-slate-800 text-[11px] leading-relaxed">
                   <p class="font-medium">${s.example}</p>
                 </div>
               </div>
 
               <!-- Tab 4: Pago -->
-              <div id="tab-content-${s.id}-pago" class="hidden space-y-3">
-                <h4 class="font-bold text-slate-900 uppercase text-[11px] tracking-wider text-coppel-blue">Vigencia y Dispersión</h4>
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center space-x-3">
-                  <div class="w-10 h-10 rounded-full bg-coppel-lightBlue text-coppel-blue flex items-center justify-center text-lg flex-shrink-0">
+              <div id="tab-content-${s.id}-pago" class="hidden space-y-2.5">
+                <h4 class="font-bold text-slate-900 uppercase text-[10px] sm:text-[11px] tracking-wider text-coppel-blue">Periodicidad y Calendario</h4>
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex items-center space-x-3">
+                  <div class="w-9 h-9 rounded-full bg-coppel-lightBlue text-coppel-blue flex items-center justify-center text-base flex-shrink-0">
                     <i class="fa-solid fa-clock"></i>
                   </div>
                   <div>
-                    <strong class="block text-slate-900 font-bold">Frecuencia de Liquidación:</strong>
-                    <p class="text-slate-600">${s.payoutFrequency}</p>
+                    <strong class="block text-slate-900 font-bold text-xs">Frecuencia de Dispersión:</strong>
+                    <p class="text-slate-600 text-[11px]">${s.payoutFrequency}</p>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         `;
@@ -972,68 +962,78 @@
         }
         selectedForCompare.push(id);
       }
-      document.getElementById('compareCountBadge').textContent = selectedForCompare.length;
+
+      const bar = document.getElementById('stickyCompareBar');
+      document.getElementById('stickyCompareCount').textContent = selectedForCompare.length;
+
+      if (selectedForCompare.length > 0) {
+        bar.classList.remove('hidden');
+      } else {
+        bar.classList.add('hidden');
+      }
+
       renderSchemes();
     }
 
     function clearComparison() {
       selectedForCompare = [];
-      document.getElementById('compareCountBadge').textContent = '0';
+      document.getElementById('stickyCompareBar').classList.add('hidden');
       renderSchemes();
       closeCompareModal();
     }
 
     function openCompareModal() {
       if (selectedForCompare.length < 2) {
-        alert("Selecciona al menos 2 esquemas para realizar una comparación simultánea.");
+        alert("Selecciona al menos 2 esquemas para comparar simultáneamente.");
         return;
       }
 
       const modal = document.getElementById('compareModal');
       const body = document.getElementById('compareModalBody');
-
       const comparedItems = schemesData.filter(s => selectedForCompare.includes(s.id));
 
       body.innerHTML = `
-        <table class="w-full text-xs text-left border-collapse bg-white rounded-xl overflow-hidden shadow-sm">
-          <thead>
-            <tr class="bg-coppel-blue text-white font-title text-sm">
-              <th class="p-4 border-b border-blue-900 w-48">Característica / Rubro</th>
-              ${comparedItems.map(item => `
-                <th class="p-4 border-b border-blue-900 min-w-[220px]">
-                  <div class="font-extrabold text-coppel-yellow text-lg">${item.id}</div>
-                  <div class="text-xs text-blue-100 font-normal">${item.name}</div>
-                </th>
-              `).join('')}
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200 text-slate-700">
-            <tr>
-              <td class="p-3 font-bold bg-slate-100">Sistema de Trabajo</td>
-              ${comparedItems.map(item => `<td class="p-3">${item.system}</td>`).join('')}
-            </tr>
-            <tr>
-              <td class="p-3 font-bold bg-slate-100">Estatus / Vigencia</td>
-              ${comparedItems.map(item => `<td class="p-3"><span class="font-bold ${item.status === 'Nacional' ? 'text-emerald-700' : 'text-amber-700'}">${item.status}</span></td>`).join('')}
-            </tr>
-            <tr>
-              <td class="p-3 font-bold bg-slate-100">Puestos Gobernados</td>
-              ${comparedItems.map(item => `<td class="p-3">${item.positions.join(', ')}</td>`).join('')}
-            </tr>
-            <tr>
-              <td class="p-3 font-bold bg-slate-100">Indicadores Base</td>
-              ${comparedItems.map(item => `
-                <td class="p-3 space-y-1">
-                  ${item.indicators.map(i => `<div class="bg-slate-50 p-1.5 rounded border border-slate-200"><strong>${i.name}:</strong> ${i.detail}</div>`).join('')}
-                </td>
-              `).join('')}
-            </tr>
-            <tr>
-              <td class="p-3 font-bold bg-slate-100">Periodicidad de Pago</td>
-              ${comparedItems.map(item => `<td class="p-3 font-semibold text-coppel-blue">${item.payoutFrequency}</td>`).join('')}
-            </tr>
-          </tbody>
-        </table>
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-xs text-left border-collapse bg-white rounded-xl overflow-hidden shadow-sm">
+            <thead>
+              <tr class="bg-coppel-darkBlue text-white font-title text-xs sm:text-sm">
+                <th class="p-3 sm:p-4 border-b border-blue-900 min-w-[130px]">Atributo</th>
+                ${comparedItems.map(item => `
+                  <th class="p-3 sm:p-4 border-b border-blue-900 min-w-[200px]">
+                    <div class="font-extrabold text-coppel-yellow text-base sm:text-lg">${item.id}</div>
+                    <div class="text-[11px] text-blue-100 font-normal leading-tight">${item.name}</div>
+                  </th>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-700">
+              <tr>
+                <td class="p-3 font-bold bg-slate-100">Sistema</td>
+                ${comparedItems.map(item => `<td class="p-3">${item.system}</td>`).join('')}
+              </tr>
+              <tr>
+                <td class="p-3 font-bold bg-slate-100">Estatus</td>
+                ${comparedItems.map(item => `<td class="p-3 font-bold ${item.status === 'Nacional' ? 'text-emerald-700' : 'text-amber-700'}">${item.status}</td>`).join('')}
+              </tr>
+              <tr>
+                <td class="p-3 font-bold bg-slate-100">Puestos</td>
+                ${comparedItems.map(item => `<td class="p-3 text-[11px]">${item.positions.join(', ')}</td>`).join('')}
+              </tr>
+              <tr>
+                <td class="p-3 font-bold bg-slate-100">Indicadores</td>
+                ${comparedItems.map(item => `
+                  <td class="p-3 space-y-1">
+                    ${item.indicators.map(i => `<div class="bg-slate-50 p-1.5 rounded border border-slate-200 text-[11px]"><strong>${i.name}:</strong> ${i.detail}</div>`).join('')}
+                  </td>
+                `).join('')}
+              </tr>
+              <tr>
+                <td class="p-3 font-bold bg-slate-100">Pago</td>
+                ${comparedItems.map(item => `<td class="p-3 font-semibold text-coppel-blue">${item.payoutFrequency}</td>`).join('')}
+              </tr>
+            </tbody>
+          </table>
+        </div>
       `;
 
       modal.classList.remove('hidden');
@@ -1045,6 +1045,87 @@
 
     function toggleGlobalRulesModal() {
       document.getElementById('rulesModal').classList.toggle('hidden');
+    }
+
+    function openCalcModal(schemeId) {
+      const scheme = schemesData.find(s => s.id === schemeId);
+      if (!scheme) return;
+
+      document.getElementById('calcModalTitle').textContent = `Calculadora: ${scheme.id}`;
+      const body = document.getElementById('calcModalBody');
+
+      body.innerHTML = `
+        <div class="bg-blue-50 p-3 rounded-xl border border-blue-200 text-blue-900 mb-3">
+          <strong class="block font-bold">${scheme.name}</strong>
+          <p class="text-[11px] mt-0.5">Ingresa los porcentajes estimativos de cumplimiento para proyectar el incentivo.</p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">% Cumplimiento Meta Principal (%):</label>
+            <input type="number" id="calcMetaVal" value="105" oninput="runSimulation()" class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold focus:ring-2 focus:ring-coppel-blue focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">% Cumplimiento Tienda / Secundario (%):</label>
+            <input type="number" id="calcTiendaVal" value="102" oninput="runSimulation()" class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold focus:ring-2 focus:ring-coppel-blue focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Monto de Ventas Individuales / Comisiones ($):</label>
+            <input type="number" id="calcVentaInd" value="5000" oninput="runSimulation()" class="w-full p-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold focus:ring-2 focus:ring-coppel-blue focus:outline-none">
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-100 rounded-xl border border-slate-200 mt-4 space-y-1 text-[11px]">
+          <div class="flex justify-between">
+            <span class="text-slate-600">Incentivo Base Meta:</span>
+            <span id="calcBaseOutput" class="font-bold">$0.00 MXN</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-600">Incentivo Meta Tienda:</span>
+            <span id="calcTiendaOutput" class="font-bold">$0.00 MXN</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-600">Comisiones Estimadas (3.5% avg):</span>
+            <span id="calcComisOutput" class="font-bold">$0.00 MXN</span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('calcModal').classList.remove('hidden');
+      runSimulation();
+    }
+
+    function runSimulation() {
+      const meta = parseFloat(document.getElementById('calcMetaVal').value) || 0;
+      const tienda = parseFloat(document.getElementById('calcTiendaVal').value) || 0;
+      const ventaInd = parseFloat(document.getElementById('calcVentaInd').value) || 0;
+
+      let basePay = 0;
+      if (meta >= 130) basePay = 1900;
+      else if (meta >= 120) basePay = 1600;
+      else if (meta >= 110) basePay = 1300;
+      else if (meta >= 100) basePay = 1000;
+      else if (meta >= 95) basePay = 800;
+      else if (meta >= 89) basePay = 600;
+
+      let tiendaPay = 0;
+      if (tienda >= 110) tiendaPay = 500;
+      else if (tienda >= 105) tiendaPay = 300;
+      else if (tienda >= 100) tiendaPay = 150;
+
+      const comisPay = ventaInd * 0.035;
+      const total = basePay + tiendaPay + comisPay;
+
+      document.getElementById('calcBaseOutput').textContent = `$${basePay.toFixed(2)} MXN`;
+      document.getElementById('calcTiendaOutput').textContent = `$${tiendaPay.toFixed(2)} MXN`;
+      document.getElementById('calcComisOutput').textContent = `$${comisPay.toFixed(2)} MXN`;
+      document.getElementById('calcTotalOutput').textContent = `$${total.toFixed(2)} MXN`;
+    }
+
+    function closeCalcModal() {
+      document.getElementById('calcModal').classList.add('hidden');
     }
   </script>
 </body>
